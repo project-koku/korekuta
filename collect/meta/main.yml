@@ -1,21 +1,14 @@
 ---
 galaxy_info:
-  author: your name
-  description: your description
-  company: your company (optional)
+  author: Chris Hambridge
+  description: Collect OCP usage data to send to Insights
+  company: Red Hat
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
-  # issue_tracker_url: http://example.com/issue/tracker
+  issue_tracker_url: https://github.com/project-koku/korekuta/issues
 
-  # Some suggested licenses:
-  # - BSD (default)
-  # - MIT
-  # - GPLv2
-  # - GPLv3
-  # - Apache
-  # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  license: AGPLv3
 
   min_ansible_version: 1.2
 
