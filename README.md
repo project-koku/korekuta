@@ -1,2 +1,43 @@
 # korekuta
-Data collector tool to obtain OCP usage data and upload it to masu.
+
+## About
+Data collector tool to obtain OCP usage data and upload it to masu. The data collector tool utilizes [ansible](https://www.ansible.com/) to collect usage data from an OCP cluster installation.
+
+## Development
+
+This is a Python project developed using Python 3.6. Make sure you have at least this version installed.
+
+To get started developing against Korekuta first clone a local copy of the git repository.
+
+```
+git clone https://github.com/project-koku/korekuta
+```
+
+Developing inside a virtual environment is recommended. A Pipfile is provided. Pipenv is recommended for combining virtual environment (virtualenv) and dependency management (pip). To install pipenv, use pip
+
+```
+pip3 install pipenv
+```
+
+Then project dependencies and a virtual environment can be created using
+
+```
+pipenv install --dev
+```
+
+To activate the virtual environment run
+
+```
+pipenv shell
+```
+
+## Testing
+
+We utilize [molecule](https://molecule.readthedocs.io/en/latest/) to test the ansible roles.
+
+Change directory to the role to be tested and run molecule (example below with setup role):
+
+```
+cd setup
+molecule test
+```
