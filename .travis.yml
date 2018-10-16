@@ -1,0 +1,20 @@
+sudo: required
+
+language: python
+
+python:
+  - "3.6"
+
+cache: pip
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get -qq update
+
+install:
+  - pip install tox
+
+script:
+  - tox
