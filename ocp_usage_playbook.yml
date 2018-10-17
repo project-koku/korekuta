@@ -1,0 +1,8 @@
+# OCP Usage Collector playbook for Insights Cost Management
+---
+
+- name: Run the OCP Usage Collector
+  hosts: localhost
+  roles:
+    - {role: 'setup', tags: 'setup'}
+    - {role: 'collect', tags: 'collect'}
