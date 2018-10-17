@@ -13,7 +13,9 @@ To get started developing against Korekuta first clone a local copy of the git r
 git clone https://github.com/project-koku/korekuta
 ```
 
-Developing inside a virtual environment is recommended. A Pipfile is provided. Pipenv is recommended for combining virtual environment (virtualenv) and dependency management (pip). To install pipenv, use pip
+Developing inside a virtual environment is recommended. A Pipfile is provided. Pipenv is recommended for combining virtual environment (virtualenv) and dependency management (pip).
+
+To install pipenv, use pip
 
 ```
 pip3 install pipenv
@@ -24,6 +26,8 @@ Then project dependencies and a virtual environment can be created using
 ```
 pipenv install --dev
 ```
+
+**NOTE:** For Linux systems, use `pipenv --site-packages` or `mkvirtualenv --system-site-packages` to set up the virtual environment. Ansible requires access to libselinux-python, which should be installed system-wide on most distributions.
 
 To activate the virtual environment run
 
