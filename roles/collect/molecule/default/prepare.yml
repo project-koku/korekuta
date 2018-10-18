@@ -1,0 +1,23 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: create symlink to simulate insights client
+      file:
+        path: '/usr/bin/insights-client'
+        src: '/bin/true'
+        state: link
+
+    - name: create test webserver dir
+      file:
+        path: '/tmp/www/api/v1/namespaces/metering/services/https:reporting-operator:http/proxy/api/v1/reports'
+        state: directory
+
+    - name: create test file
+      copy:
+        dest: '/tmp/www/api/v1/namespaces/metering/services/https:reporting-operator:http/proxy/api/v1/reports/get'
+        content: 'this,is,test,data'
+
+    - name: launch test web server
+      shell: cd /tmp/www; nohup python -m SimpleHTTPServer 8001 </dev/null >/dev/null 2>&1 &

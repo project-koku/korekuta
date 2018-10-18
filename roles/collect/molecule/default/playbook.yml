@@ -3,3 +3,4 @@
   hosts: all
   roles:
     - role: collect
+      collect_delete_after: false

@@ -1,2 +1,51 @@
 ---
-# tasks file for collect
+- name: Check that insights client exists
+  stat:
+    path: '{{ collect_insights_client_cmd }}'
+  register: stat_result
+
+- name: Fail if insights-client is not found
+  fail:
+    msg: "Unable to locate insights-client: {{ collect_insights_client_cmd }}"
+  when: stat_result.stat.exists != true
+
+- name: Create temp dir for downloaded files
+  file:
+    path: '{{ collect_download_path }}'
+    state: directory
+
+- name: Download OCP report from endpoint
+  get_url:
+    url: '{{ collect_endpoint_url }}'
+    dest: '{{ collect_download_path }}/korekuta-collect-report.{{ collect_format }}'
+  register: download_result
+
+- name: set csv_filename fact
+  set_fact:
+    collect_csv_filename: '{{ download_result.dest | basename }}'
+
+- name: Generate archive manifest
+  template:
+    src: 'templates/manifest.j2'
+    dest: '{{ collect_download_path }}/manifest.json'
+
+- name: Create tarball
+  archive:
+    format: '{{ collect_archive_format }}'
+    dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
+    path: '{{ collect_download_path }}'
+    remove: '{{ collect_delete_after }}'
+  register: archive_result
+
+- name: Send payload to the Insights client
+  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }}'
+  environment:
+    BYPASS_GPG=True
+    EGG=/etc/insights-client/rpm.egg
+  when: archive_result.state == 'archive' or archive_result.state == 'compress'
+
+- name: Remove temp files
+  file:
+    path: '{{ collect_download_path.path }}'
+    state: absent
+  when: collect_delete_after
