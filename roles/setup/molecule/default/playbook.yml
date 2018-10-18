@@ -1,5 +1,12 @@
 ---
 - name: Converge
   hosts: all
+
+  vars:
+    CLUSTER_ALIAS: foo_prod
+    CLUSTER_API: foo.com
+    CLUSTER_USER: user1
+    CLUSTER_TOKEN_PATH: "{{ ansible_env.HOME }}/ocp_token"
+
   roles:
     - role: setup
