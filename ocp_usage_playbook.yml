@@ -3,6 +3,7 @@
 
 - name: Run the OCP Usage Collector
   hosts: localhost
+  connection: local
   roles:
     - {role: 'setup', tags: 'setup'}
     - {role: 'collect', tags: 'collect'}

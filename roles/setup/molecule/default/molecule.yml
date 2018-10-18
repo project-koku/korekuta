@@ -10,6 +10,14 @@ platforms:
     image: centos:7
 provisioner:
   name: ansible
+  env:
+    CLUSTER_ALIAS: foo_prod
+  inventory:
+    host_vars:
+      localhost:
+        CLUSTER_ALIAS: foo_prod
+      instance:
+        CLUSTER_ALIAS: foo_prod
   lint:
     name: ansible-lint
 scenario:

@@ -13,9 +13,9 @@
 
 export PATH=$PATH:$ANSIBLE_HOME/bin
 PLAYBOOKFILE="ocp_usage_playbook.yml"
-SETUP_TAG='--tags "setup"'
-COLLECT_TAG='--tags "collect"'
-tag='' 
+SETUP_TAG="--tags=setup"
+COLLECT_TAG="--tags=collect"
+tag=""
 
 declare -a args
 args=("$*")
@@ -62,10 +62,10 @@ else
   exit 1
 fi
 
-if [ ! -f /etc/redhat-release ]; then
-  echo '/etc/redhat-release not found. You need to run this on a Red Hat based OS.'
-  exit 1
-fi
+# if [ ! -f /etc/redhat-release ]; then
+#   echo '/etc/redhat-release not found. You need to run this on a Red Hat based OS.'
+#   exit 1
+# fi
 
 if dnf --version > /dev/null 2>&1; then
   PKG_MGR=dnf
@@ -95,14 +95,8 @@ then
   exit 1
 fi
 
-if [[ $EUID -ne 0 ]]
-then
-  echo ansible-playbook $PLAYBOOKFILE -v -K $tag ${@:2}
-  ansible-playbook $PLAYBOOKFILE -v -K $tag ${@:2}
-else
-  echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-  ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-fi
+echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
 
 if [ $? -eq 0 ]
 then
