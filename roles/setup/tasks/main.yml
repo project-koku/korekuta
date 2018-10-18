@@ -1,29 +1,16 @@
 ---
 # tasks file for setup
 
-- name: Check for CLUSTER_ALIAS input
+- name: Ensure needed variables are set
   fail:
-    msg: "You must supply '-e CLUSTER_ALIAS=<cluster_alias>'."
-  when:
-    - not CLUSTER_ALIAS is defined
-
-- name: Check for CLUSTER_API input
-  fail:
-    msg: "You must supply '-e CLUSTER_API=<cluster_api>'."
-  when:
-    - not CLUSTER_API is defined
-
-- name: Check for CLUSTER_USER input
-  fail:
-    msg: "You must supply '-e CLUSTER_USER=<cluster_user>'."
-  when:
-    - not CLUSTER_USER is defined
-
-- name: Check for CLUSTER_TOKEN_PATH input
-  fail:
-    msg: "You must supply '-e CLUSTER_TOKEN_PATH=</path/to/file/with/ocp/token>'."
-  when:
-    - not CLUSTER_TOKEN_PATH is defined
+    msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
+  when: item is undefined
+  with_items:
+    - CLUSTER_ALIAS
+    - CLUSTER_API
+    - CLUSTER_USER
+    - CLUSTER_TOKEN_PATH
+    - CLUSTER_USER
 
 - name: Check that CLUSTER_TOKEN_PATH exists
   stat:

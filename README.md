@@ -42,6 +42,6 @@ We utilize [molecule](https://molecule.readthedocs.io/en/latest/) to test the an
 Change directory to the role to be tested and run molecule (example below with setup role):
 
 ```
-cd setup
+cd roles/setup
 molecule test
 ```
