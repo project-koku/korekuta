@@ -1,2 +1,95 @@
 ---
 # tasks file for setup
+
+- name: Ensure needed variables are set
+  fail:
+    msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
+  when: item is undefined
+  with_items:
+    - CLUSTER_ALIAS
+    - CLUSTER_API
+    - CLUSTER_USER
+    - CLUSTER_TOKEN_PATH
+    - CLUSTER_USER
+
+- name: Check that CLUSTER_TOKEN_PATH exists
+  stat:
+    path: "{{ CLUSTER_TOKEN_PATH }}"
+  register: cluster_token_stat_result
+
+- name: CLUSTER_TOKEN_PATH does not exits
+  fail:
+    msg: "No file was found for CLUSTER_TOKEN_PATH at '{{ CLUSTER_TOKEN_PATH }}'."
+  when:
+    - not cluster_token_stat_result.stat.exists
+
+- name: Generate random UUID for cluster identifier
+  set_fact:
+    cluster_id: "{{ 9999999999999999999999 | random | to_uuid }}"
+
+- name: Define OCP Usage configuration defaults
+  set_fact:
+    ocp_usage_config_dir: "{{ ansible_env.HOME }}/.config/ocp_usage"
+    ocp_usage_config_file: "{{ ansible_env.HOME }}/.config/ocp_usage/config.json"
+  when:
+    - OCP_USAGE_CONFIG_DIR is not defined
+
+- name: Define OCP Usage configuration
+  set_fact:
+    ocp_usage_config_dir: "{{ OCP_USAGE_CONFIG_DIR }}"
+    ocp_usage_config_file: "{{ OCP_USAGE_CONFIG_DIR }}/config.json"
+  when:
+    - OCP_USAGE_CONFIG_DIR is defined
+
+- name: Create config data location
+  file:
+    path: "{{ ocp_usage_config_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Check that OCP Usage configuration exists
+  stat:
+    path: "{{ ocp_usage_config_file }}"
+  register: ocp_usage_config_stat_result
+
+- name: Read OCP Usage configuration contents
+  command: cat {{ ocp_usage_config_file }}
+  register: ocp_usage_config_file_cat
+  when:
+    - ocp_usage_config_stat_result.stat.exists
+    - OCP_USAGE_CONFIG_OVERWRITE is defined
+    - "{{ OCP_USAGE_CONFIG_OVERWRITE | bool }}"
+
+- name: Transform OCP Usage configuration contents
+  set_fact:
+    config_content: "{{ ocp_usage_config_file_cat.stdout | from_json }}"
+  when:
+    - ocp_usage_config_stat_result.stat.exists
+    - ocp_usage_config_file_cat.stdout is defined
+    - OCP_USAGE_CONFIG_OVERWRITE is defined
+    - "{{ OCP_USAGE_CONFIG_OVERWRITE | bool }}"
+
+- name: Create new setup data configuration
+  set_fact:
+    config_json: '{"ocp_api":"{{ CLUSTER_API }}","ocp_user":"{{ CLUSTER_USER }}","ocp_token_file":"{{ CLUSTER_TOKEN_PATH }}", "cluster_alias": "{{ CLUSTER_ALIAS }}", "cluster_id": "{{ cluster_id }}"}'
+  when:
+    - config_content is not defined
+    - not ocp_usage_config_stat_result.stat.exists
+
+- name: Replace setup data configuration
+  set_fact:
+    config_json: '{"ocp_api":"{{ CLUSTER_API }}","ocp_user":"{{ CLUSTER_USER }}","ocp_token_file":"{{ CLUSTER_TOKEN_PATH }}", "cluster_alias": "{{ CLUSTER_ALIAS }}", "cluster_id": "{{ cluster_id }}"}'
+  when:
+    - config_content is defined
+    - config_content.get('ocp_api') != CLUSTER_API
+    - config_content.get('ocp_user') != CLUSTER_USER
+    - config_content.get('ocp_token_file') != CLUSTER_TOKEN_PATH
+    - config_content.get('cluster_alias') != CLUSTER_ALIAS
+    - config_content.get('cluster_id') != cluster_id
+
+- name: Record setup inputs
+  copy:
+    content: "{{ config_json }}"
+    dest: "{{ ocp_usage_config_file }}"
+  when:
+    - config_json is defined

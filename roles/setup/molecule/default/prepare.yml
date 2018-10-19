@@ -1,0 +1,8 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+  - name: Create OCP token file
+    copy:
+        dest: "{{ ansible_env.HOME }}/ocp_token"
+        content: "1lW78hdXzo-t6EaEBvhzf0hT7YaCUJjj78kcA6LtiEc"
