@@ -9,14 +9,20 @@
         src: '/bin/true'
         state: link
 
+    - name: create test setup.json
+      copy:
+        dest: '/tmp/ocp-test-config.json'
+        content: '{"ocp_api":"http://localhost:8001", "ocp_user":"test-user", "ocp_token_file":"/path/to/token/file", "cluster_alias": "test-alias", "cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test"}'
+        mode: '0644'
+
     - name: create test webserver dir
       file:
-        path: '/tmp/www/api/v1/namespaces/metering/services/https:reporting-operator:http/proxy/api/v1/reports'
+        path: '/tmp/www/api/v1/namespaces/metering'
         state: directory
 
     - name: create test file
       copy:
-        dest: '/tmp/www/api/v1/namespaces/metering/services/https:reporting-operator:http/proxy/api/v1/reports/get'
+        dest: '/tmp/www/api/v1/namespaces/metering/test'
         content: 'this,is,test,data'
 
     - name: launch test web server

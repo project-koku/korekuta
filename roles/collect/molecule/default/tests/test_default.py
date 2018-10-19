@@ -23,6 +23,11 @@ def test_manifest_file(host):
     manifest_file = download_path + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
+    assert host.file(manifest_file).contains(
+        '"file": "korekuta-collect-report.csv"')
+    assert host.file(manifest_file).contains('"date":')
+    assert host.file(manifest_file).contains('"uuid":')
+    assert host.file(manifest_file).contains('"cluster_id": "test-cluster-id"')
 
 
 def test_archive_file(host):

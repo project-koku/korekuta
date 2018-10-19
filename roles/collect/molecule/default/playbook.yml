@@ -4,3 +4,4 @@
   roles:
     - role: collect
       collect_delete_after: false
+      collect_ocp_config_file: '/tmp/ocp-test-config.json'

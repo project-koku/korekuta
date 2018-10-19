@@ -1,13 +1,32 @@
 ---
-- name: Check that insights client exists
-  stat:
-    path: '{{ collect_insights_client_cmd }}'
-  register: stat_result
+# looping over blocks isn't available, so we'll loop over included tasks instead.
+# see: https://github.com/ansible/ansible/issues/13262#issuecomment-335904803
+- name: validate dependencies
+  import_tasks: validate.yml
+  vars:
+    files:
+      - '{{ collect_insights_client_cmd }}'
+      - '{{ collect_ocp_config_file }}'
 
-- name: Fail if insights-client is not found
-  fail:
-    msg: "Unable to locate insights-client: {{ collect_insights_client_cmd }}"
-  when: stat_result.stat.exists != true
+- name: Fetch OCP config file from remote host
+  fetch:
+    src: '{{ collect_ocp_config_file }}'
+    dest: '/tmp/'
+    fail_on_missing: true
+    flat: true
+
+- name: Read in OCP configuration file
+  include_vars:
+    file: '/tmp/{{ collect_ocp_config_file | basename }}'
+    name: ocp_config
+
+- name: Define OCP API endpoint
+  set_fact:
+    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}'
+
+- name: Define OCP API URL
+  set_fact:
+    collect_endpoint_url: '{{ ocp_config["ocp_api"] }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
 
 - name: Create temp dir for downloaded files
   file:

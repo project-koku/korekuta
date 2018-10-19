@@ -1,4 +1,3 @@
 ---
 # vars file for collect
-collect_endpoint_url: '{{ collect_endpoint_scheme }}://{{ collect_endpoint_host }}:{{ collect_endpoint_port }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
 collect_archive_filename: '{{ collect_archive_name }}.tar.{{ collect_archive_format }}'
