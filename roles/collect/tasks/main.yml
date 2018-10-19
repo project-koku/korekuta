@@ -1,2 +1,70 @@
 ---
-# tasks file for collect
+# looping over blocks isn't available, so we'll loop over included tasks instead.
+# see: https://github.com/ansible/ansible/issues/13262#issuecomment-335904803
+- name: validate dependencies
+  import_tasks: validate.yml
+  vars:
+    files:
+      - '{{ collect_insights_client_cmd }}'
+      - '{{ collect_ocp_config_file }}'
+
+- name: Fetch OCP config file from remote host
+  fetch:
+    src: '{{ collect_ocp_config_file }}'
+    dest: '/tmp/'
+    fail_on_missing: true
+    flat: true
+
+- name: Read in OCP configuration file
+  include_vars:
+    file: '/tmp/{{ collect_ocp_config_file | basename }}'
+    name: ocp_config
+
+- name: Define OCP API endpoint
+  set_fact:
+    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}'
+
+- name: Define OCP API URL
+  set_fact:
+    collect_endpoint_url: '{{ ocp_config["ocp_api"] }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
+
+- name: Create temp dir for downloaded files
+  file:
+    path: '{{ collect_download_path }}'
+    state: directory
+
+- name: Download OCP report from endpoint
+  get_url:
+    url: '{{ collect_endpoint_url }}'
+    dest: '{{ collect_download_path }}/korekuta-collect-report.{{ collect_format }}'
+  register: download_result
+
+- name: set csv_filename fact
+  set_fact:
+    collect_csv_filename: '{{ download_result.dest | basename }}'
+
+- name: Generate archive manifest
+  template:
+    src: 'templates/manifest.j2'
+    dest: '{{ collect_download_path }}/manifest.json'
+
+- name: Create tarball
+  archive:
+    format: '{{ collect_archive_format }}'
+    dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
+    path: '{{ collect_download_path }}'
+    remove: '{{ collect_delete_after }}'
+  register: archive_result
+
+- name: Send payload to the Insights client
+  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }}'
+  environment:
+    BYPASS_GPG=True
+    EGG=/etc/insights-client/rpm.egg
+  when: archive_result.state == 'archive' or archive_result.state == 'compress'
+
+- name: Remove temp files
+  file:
+    path: '{{ collect_download_path.path }}'
+    state: absent
+  when: collect_delete_after
