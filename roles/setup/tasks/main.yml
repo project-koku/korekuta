@@ -1,11 +1,6 @@
 ---
 # tasks file for setup
 
-- name: Download OCP report from endpoint
-  get_url:
-    url: 'http://localhost:8443/version'
-    dest: '/tmp/version.json'
-
 - name: Ensure needed variables are set
   fail:
     msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
@@ -98,8 +93,9 @@
     username: "{{ CLUSTER_USER }}"
     key_file: "{{ CLUSTER_TOKEN_PATH }}"
     namespace: "{{ OCP_METERING_NAMESPACE }}"
-  with_fileglob:
-    - "files/hccm_openshift_usage_report*"
+  with_file:
+    - "files/hccm_openshift_usage_report_generation_query.yaml"
+    - "files/hccm_openshift_usage_report.yaml"
 
 - name: Create new setup data configuration
   template:
