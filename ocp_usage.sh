@@ -44,8 +44,6 @@ usage() {
          -e OCP_USER=user
     * Provide Openshift Container Platform User Token File:
          -e OCP_TOKEN_PATH=/path/to/file/with/ocp/token
-    * Overwrite existing configuration:
-         -e OCP_USAGE_CONFIG_OVERWRITE=True
 EOM
     exit 0
 }

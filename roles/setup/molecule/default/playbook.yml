@@ -4,9 +4,10 @@
 
   vars:
     CLUSTER_ALIAS: foo_prod
-    CLUSTER_API: foo.com
-    CLUSTER_USER: user1
+    CLUSTER_API: http://127.0.0.1:8443
+    CLUSTER_USER: developer
     CLUSTER_TOKEN_PATH: "{{ ansible_env.HOME }}/ocp_token"
+    OCP_METERING_NAMESPACE: metering
 
   roles:
     - role: setup
