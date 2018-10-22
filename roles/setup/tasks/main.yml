@@ -11,6 +11,7 @@
     - CLUSTER_USER
     - CLUSTER_TOKEN_PATH
     - CLUSTER_USER
+    - OCP_METERING_NAMESPACE
 
 - name: Check that CLUSTER_TOKEN_PATH exists
   stat:
@@ -52,33 +53,62 @@
     path: "{{ ocp_usage_config_file }}"
   register: ocp_usage_config_stat_result
 
-- name: Read OCP Usage configuration contents
-  command: cat {{ ocp_usage_config_file }}
-  register: ocp_usage_config_file_cat
+- name: Fetch OCP config file
+  fetch:
+    src: "{{ ocp_usage_config_file }}"
+    dest: "/tmp/ocp_config.json"
+    flat: true
+    fail_on_missing: true
   when:
     - ocp_usage_config_stat_result.stat.exists
-    - OCP_USAGE_CONFIG_OVERWRITE is defined
-    - "{{ OCP_USAGE_CONFIG_OVERWRITE | bool }}"
 
-- name: Transform OCP Usage configuration contents
-  set_fact:
-    config_content: "{{ ocp_usage_config_file_cat.stdout | from_json }}"
+- name: Read in OCP configuration file
+  include_vars:
+    file: "/tmp/ocp_config.json"
+    name: config_content
   when:
     - ocp_usage_config_stat_result.stat.exists
-    - ocp_usage_config_file_cat.stdout is defined
-    - OCP_USAGE_CONFIG_OVERWRITE is defined
-    - "{{ OCP_USAGE_CONFIG_OVERWRITE | bool }}"
+
+- name: Install Openshift Python prerequisites
+  yum:
+    name: ["python-setuptools", "python-pip", "python-wheel"]
+    state: present
+  become: true
+
+- name: Upgrade setuptools and pip to latest
+  pip:
+    name: ["setuptools", "pip"]
+    extra_args: --upgrade
+
+- name: Install Openshift Python
+  pip:
+    name: openshift
+    extra_args: --ignore-installed ipaddress
+
+- name: Execute Openshift definition files
+  k8s:
+    state: present
+    definition: "{{ item | from_yaml }}"
+    host: "{{ CLUSTER_API }}"
+    username: "{{ CLUSTER_USER }}"
+    key_file: "{{ CLUSTER_TOKEN_PATH }}"
+    namespace: "{{ OCP_METERING_NAMESPACE }}"
+  with_file:
+    - "files/hccm_openshift_usage_report_generation_query.yaml"
+    - "files/hccm_openshift_usage_report.yaml"
 
 - name: Create new setup data configuration
-  set_fact:
-    config_json: '{"ocp_api":"{{ CLUSTER_API }}","ocp_user":"{{ CLUSTER_USER }}","ocp_token_file":"{{ CLUSTER_TOKEN_PATH }}", "cluster_alias": "{{ CLUSTER_ALIAS }}", "cluster_id": "{{ cluster_id }}"}'
+  template:
+    src: 'templates/config.j2'
+    dest: '{{ ocp_usage_config_file }}'
   when:
     - config_content is not defined
     - not ocp_usage_config_stat_result.stat.exists
 
 - name: Replace setup data configuration
-  set_fact:
-    config_json: '{"ocp_api":"{{ CLUSTER_API }}","ocp_user":"{{ CLUSTER_USER }}","ocp_token_file":"{{ CLUSTER_TOKEN_PATH }}", "cluster_alias": "{{ CLUSTER_ALIAS }}", "cluster_id": "{{ cluster_id }}"}'
+  template:
+    src: 'templates/config.j2'
+    dest: '{{ ocp_usage_config_file }}'
   when:
     - config_content is defined
     - config_content.get('ocp_api') != CLUSTER_API
@@ -86,10 +116,9 @@
     - config_content.get('ocp_token_file') != CLUSTER_TOKEN_PATH
     - config_content.get('cluster_alias') != CLUSTER_ALIAS
     - config_content.get('cluster_id') != cluster_id
+    - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 
-- name: Record setup inputs
-  copy:
-    content: "{{ config_json }}"
-    dest: "{{ ocp_usage_config_file }}"
+- debug:
+    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider for {{ CLUSTER_ALIAS }} cluster in Cost Management."
   when:
     - config_json is defined
