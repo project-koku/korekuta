@@ -6,7 +6,6 @@
     msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
   when: item is undefined
   with_items:
-    - CLUSTER_ALIAS
     - CLUSTER_API
     - CLUSTER_USER
     - CLUSTER_TOKEN_PATH
@@ -114,7 +113,6 @@
     - config_content.get('ocp_api') != CLUSTER_API
     - config_content.get('ocp_user') != CLUSTER_USER
     - config_content.get('ocp_token_file') != CLUSTER_TOKEN_PATH
-    - config_content.get('cluster_alias') != CLUSTER_ALIAS
     - config_content.get('cluster_id') != cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 

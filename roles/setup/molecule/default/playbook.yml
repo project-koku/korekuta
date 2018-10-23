@@ -3,7 +3,6 @@
   hosts: all
 
   vars:
-    CLUSTER_ALIAS: foo_prod
     CLUSTER_API: http://127.0.0.1:8443
     CLUSTER_USER: developer
     CLUSTER_TOKEN_PATH: "{{ ansible_env.HOME }}/ocp_token"
