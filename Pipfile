@@ -11,6 +11,8 @@ openshift = "==0.7.2"
 [dev-packages]
 tox = "==3.5.2"
 molecule = "==2.18.1"
+"flake8" = "==3.5.0"
+pylint = "==2.1.1"
 
 [requires]
 python_version = "3.6"
