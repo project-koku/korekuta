@@ -4,7 +4,7 @@ import os
 import testinfra.utils.ansible_runner
 
 
-testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  
+testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disable=invalid-name
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
