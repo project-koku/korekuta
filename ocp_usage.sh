@@ -36,14 +36,14 @@ usage() {
 
 
     Extra Variables:
-    * Provide cluster alias:
-         -e CLUSTER_ALIAS=MyCompanyProductionCluster
     * Provide Openshift Container Platform API Endpoint:
          -e OCP_API=api.openshift-prod.mycompany.com
     * Provide Openshift Container Platform User:
          -e OCP_USER=user
     * Provide Openshift Container Platform User Token File:
          -e OCP_TOKEN_PATH=/path/to/file/with/ocp/token
+    * Provide Openshift Metering Namespace:
+         -e OCP_METERING_NAMESPACE=metering
 EOM
     exit 0
 }
