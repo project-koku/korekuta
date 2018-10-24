@@ -5,3 +5,6 @@
     - role: collect
       collect_delete_after: false
       collect_ocp_config_file: '/tmp/ocp-test-config.json'
+      collect_archive_format: bz2
+      collect_oc_command: /usr/local/bin/oc
+      collect_with_proxy: false
