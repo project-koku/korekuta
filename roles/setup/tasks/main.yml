@@ -114,7 +114,14 @@
     - config_content.get('cluster_id') != cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 
-- debug:
-    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider for {{ CLUSTER_ALIAS }} cluster in Cost Management."
+- name: Display New Cluster Identifier
+  debug:
+    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management."
   when:
-    - config_json is defined
+    - config_content is not defined
+
+- name: Display Current Cluster Identifier
+  debug:
+    msg: "Use the following value, {{ config_content.get('cluster_id') }}, for the cluster identifier when configuring an OCP provider in Cost Management."
+  when:
+    - config_content is defined
