@@ -4,24 +4,22 @@
 - name: Ensure needed variables are set
   fail:
     msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
-  when: item is undefined
+  when: "{{ item }} is not defined"
   with_items:
-    - CLUSTER_API
-    - CLUSTER_USER
-    - CLUSTER_TOKEN_PATH
-    - CLUSTER_USER
+    - OCP_API
+    - OCP_TOKEN_PATH
     - OCP_METERING_NAMESPACE
 
-- name: Check that CLUSTER_TOKEN_PATH exists
+- name: Check that OCP_TOKEN_PATH exists
   stat:
-    path: "{{ CLUSTER_TOKEN_PATH }}"
-  register: cluster_token_stat_result
+    path: "{{ OCP_TOKEN_PATH }}"
+  register: ocp_token_stat_result
 
-- name: CLUSTER_TOKEN_PATH does not exits
+- name: OCP_TOKEN_PATH does not exits
   fail:
-    msg: "No file was found for CLUSTER_TOKEN_PATH at '{{ CLUSTER_TOKEN_PATH }}'."
+    msg: "No file was found for OCP_TOKEN_PATH at '{{ OCP_TOKEN_PATH }}'."
   when:
-    - not cluster_token_stat_result.stat.exists
+    - not ocp_token_stat_result.stat.exists
 
 - name: Generate random UUID for cluster identifier
   set_fact:
@@ -78,19 +76,20 @@
   pip:
     name: ["setuptools", "pip"]
     extra_args: --upgrade
+  become: true
 
 - name: Install Openshift Python
   pip:
     name: openshift
     extra_args: --ignore-installed ipaddress
+  become: true
 
 - name: Execute Openshift definition files
   k8s:
     state: present
     definition: "{{ item | from_yaml }}"
-    host: "{{ CLUSTER_API }}"
-    username: "{{ CLUSTER_USER }}"
-    key_file: "{{ CLUSTER_TOKEN_PATH }}"
+    host: "{{ OCP_API }}"
+    key_file: "{{ OCP_TOKEN_PATH }}"
     namespace: "{{ OCP_METERING_NAMESPACE }}"
   with_file:
     - "files/hccm_openshift_usage_report_generation_query.yaml"
@@ -110,13 +109,19 @@
     dest: '{{ ocp_usage_config_file }}'
   when:
     - config_content is defined
-    - config_content.get('ocp_api') != CLUSTER_API
-    - config_content.get('ocp_user') != CLUSTER_USER
-    - config_content.get('ocp_token_file') != CLUSTER_TOKEN_PATH
+    - config_content.get('ocp_api') != OCP_API
+    - config_content.get('ocp_token_file') != OCP_TOKEN_PATH
     - config_content.get('cluster_id') != cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 
-- debug:
-    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider for {{ CLUSTER_ALIAS }} cluster in Cost Management."
+- name: Display New Cluster Identifier
+  debug:
+    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management."
   when:
-    - config_json is defined
+    - config_content is not defined
+
+- name: Display Current Cluster Identifier
+  debug:
+    msg: "Use the following value, {{ config_content.get('cluster_id') }}, for the cluster identifier when configuring an OCP provider in Cost Management."
+  when:
+    - config_content is defined
