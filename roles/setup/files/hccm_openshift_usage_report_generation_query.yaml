@@ -59,7 +59,7 @@ spec:
         ON PCUR.pod = PCRR.pod
           AND PCUR.namespace = PCRR.namespace
           AND PCUR.node = PCRR.node
-          AND date_trunc('hour', PCUR."timestamp") = date_trunc('hour', PCRR."timestamp")
+          AND PCUR."timestamp" = PCRR."timestamp"
     JOIN {| generationQueryViewName "pod-memory-usage-raw" |} AS PMUR
         ON PCUR.pod = PMUR.pod
           AND PCUR.namespace = PMUR.namespace
