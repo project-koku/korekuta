@@ -37,9 +37,7 @@ usage() {
 
     Extra Variables:
     * Provide Openshift Container Platform API Endpoint:
-         -e OCP_API=api.openshift-prod.mycompany.com
-    * Provide Openshift Container Platform User:
-         -e OCP_USER=user
+         -e OCP_API=https://api.openshift-prod.mycompany.com
     * Provide Openshift Container Platform User Token File:
          -e OCP_TOKEN_PATH=/path/to/file/with/ocp/token
     * Provide Openshift Metering Namespace:
@@ -95,8 +93,14 @@ then
   exit 1
 fi
 
-echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+if [[ ($tag == $SETUP_TAG) ]]
+then
+  echo ansible-playbook $PLAYBOOKFILE -K -v $tag ${@:2}
+  ansible-playbook $PLAYBOOKFILE -K -v $tag ${@:2}
+else
+  echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+  ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+fi
 
 if [ $? -eq 0 ]
 then
