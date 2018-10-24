@@ -4,42 +4,42 @@ metadata:
   name: hccm-openshift-usage
 spec:
   columns:
-  - name: report_period_start
-    type: timestamp
-    unit: date
-  - name: report_period_end
-    type: timestamp
-    unit: date
-  - name: pod
-    type: string
-    unit: kubernetes_pod
-  - name: namespace
-    type: string
-    unit: kubernetes_namespace
-  - name: node
-    type: string
-    unit: kubernetes_node
-  - name: interval_start
-    type: timestamp
-    unit: date
-  - name: interval_end
-    type: timestamp
-    unit: date
-  - name: pod_usage_cpu_core_seconds
-    type: double
-    unit: cpu_core_seconds
-  - name: pod_request_cpu_core_seconds
-    type: double
-    unit: cpu_core_seconds
-  - name: pod_usage_memory_byte_seconds
-    type: double
-    unit: byte_seconds
-  - name: pod_request_memory_byte_seconds
-    type: double
-    unit: byte_seconds
+    - name: report_period_start
+      type: timestamp
+      unit: date
+    - name: report_period_end
+      type: timestamp
+      unit: date
+    - name: pod
+      type: string
+      unit: kubernetes_pod
+    - name: namespace
+      type: string
+      unit: kubernetes_namespace
+    - name: node
+      type: string
+      unit: kubernetes_node
+    - name: interval_start
+      type: timestamp
+      unit: date
+    - name: interval_end
+      type: timestamp
+      unit: date
+    - name: pod_usage_cpu_core_seconds
+      type: double
+      unit: cpu_core_seconds
+    - name: pod_request_cpu_core_seconds
+      type: double
+      unit: cpu_core_seconds
+    - name: pod_usage_memory_byte_seconds
+      type: double
+      unit: byte_seconds
+    - name: pod_request_memory_byte_seconds
+      type: double
+      unit: byte_seconds
   inputs:
-  - name: ReportingStart
-  - name: ReportingEnd
+    - name: ReportingStart
+    - name: ReportingEnd
   query: |
     SELECT
       timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart| prestoTimestamp |}' AS report_period_start,
@@ -74,9 +74,9 @@ spec:
     GROUP BY PCUR.namespace, PCUR.pod, PCUR.node, date_trunc('hour', PCUR."timestamp")
     ORDER BY namespace, pod, node ASC, interval_start asc, pod_usage_cpu_core_seconds DESC
   reportQueries:
-  - pod-cpu-usage-raw
-  - pod-cpu-request-raw
-  - pod-memory-usage-raw
-  - pod-memory-request-raw
+    - pod-cpu-usage-raw
+    - pod-cpu-request-raw
+    - pod-memory-usage-raw
+    - pod-memory-request-raw
   view:
     disabled: true
