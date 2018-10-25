@@ -1,0 +1,14 @@
+---
+- name: 'Check that required files exist'
+  stat:
+    path: '{{ item }}'
+  register: stat_result
+  with_items:
+    - '{{ files }}'
+
+- name: 'Fail if required file is not found'
+  fail:
+    msg: 'Unable to locate: {{ item }}'
+  when: item.stat.exists != true
+  with_items:
+    - '{{ stat_result.results }}'
