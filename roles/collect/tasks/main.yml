@@ -20,6 +20,12 @@
     file: '/tmp/{{ collect_ocp_config_file | basename }}'
     name: ocp_config
 
+- name: validate ocp_config_file dependencies
+  import_tasks: validate.yml
+  vars:
+    files:
+      - '{{ ocp_config["ocp_token_file"] }}'
+
 - name: Define OCP API endpoint
   set_fact:
     collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}'
@@ -32,6 +38,19 @@
   file:
     path: '{{ collect_download_path }}'
     state: directory
+
+- name: Read the OCP token
+  command: 'cat {{ ocp_config["ocp_token_file"] }}'
+  register: cat_token
+  changed_when: false
+
+- name: Log in to OCP cluster
+  command: '{{ collect_oc_command }} login {{ ocp_config["ocp_api"] }} --token {{ cat_token.stdout }}'
+  when: cat_token.stdout is defined and cat_token != ''
+
+- name: Run OC Proxy
+  command: 'nohup {{ collect_oc_command }} proxy >/dev/null 2>&1 &'
+  when: collect_with_proxy and cat_token.stdout is defined and cat_token != ''
 
 - name: Download OCP report from endpoint
   get_url:

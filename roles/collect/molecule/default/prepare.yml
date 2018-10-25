@@ -1,8 +1,12 @@
 ---
 - name: Prepare
   hosts: all
-  gather_facts: false
+  gather_facts: true
   tasks:
+    - name: install openshift client
+      include_role:
+        name: andrewrothstein.openshift-origin-client-tools
+
     - name: create symlink to simulate insights client
       file:
         path: '/usr/bin/insights-client'
@@ -12,8 +16,13 @@
     - name: create test setup.json
       copy:
         dest: '/tmp/ocp-test-config.json'
-        content: '{"ocp_api":"http://localhost:8001", "ocp_user":"test-user", "ocp_token_file":"/path/to/token/file", "cluster_alias": "test-alias", "cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test"}'
+        content: '{"ocp_api":"http://localhost:8001", "ocp_user":"test-user", "ocp_token_file":"/tmp/collect-test-token", "cluster_alias": "test-alias", "cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test"}'
         mode: '0644'
+
+    - name: create test token file
+      copy:
+        dest: '/tmp/collect-test-token'
+        content: '03d9687baa9d658f3a4be7aea73163118ad78569fbadf52fe893c3f3ab7c1777'
 
     - name: create test webserver dir
       file:
