@@ -43,7 +43,7 @@
 
 - name: Define OCP API URL with proxy
   set_fact:
-    collect_endpoint_url: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
+    collect_endpoint_url: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}/{{ collect_endpoint_path }}{{ collect_endpoint_params }}'
   when: collect_with_proxy
 
 - name: Create temp dir for downloaded files
@@ -90,15 +90,16 @@
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
-- name: Send payload to the Insights client
-  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }}'
+- name: Send payload to the Insights Client
+  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }} --content-type={{ collect_content_type }}'
   environment:
-    BYPASS_GPG=True
-    EGG=/etc/insights-client/rpm.egg
-  when: archive_result.state == 'archive' or archive_result.state == 'compress'
+    BYPASS_GPG: 'True'
+    EGG: '/etc/insights-client/rpm.egg'
+  become: true
+  when: archive_result.state == 'file'
 
 - name: Remove temp files
   file:
-    path: '{{ collect_download_path.path }}'
+    path: '{{ collect_download_path }}'
     state: absent
   when: collect_delete_after
