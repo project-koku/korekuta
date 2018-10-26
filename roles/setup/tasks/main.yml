@@ -26,9 +26,35 @@
   when:
     - not ocp_token_stat_result.stat.exists
 
+- name: Set OCP Proxy Port
+  set_fact:
+    ocp_proxy_port: '{{ OCP_PROXY_PORT }}'
+  when:
+    - OCP_PROXY_PORT is defined
+    - OCP_PROXY_PORT is number
+
+- name: Set OCP Proxy Port to default
+  set_fact:
+    ocp_proxy_port: '{{ setup_default_proxy_port }}'
+  when:
+    - ocp_proxy_port is not defined
+
+- name: Set OCP SSL certificate validation
+  set_fact:
+    ocp_validate_cert: '{{ OCP_SSL_CERT_VALIDATION | bool }}'
+  when:
+    - OCP_SSL_CERT_VALIDATION is defined
+    - '{{ OCP_SSL_CERT_VALIDATION | bool }}'
+
+- name: Set OCP SSL certificate validation default
+  set_fact:
+    ocp_validate_cert: '{{ setup_default_validate_cert }}'
+  when:
+    - ocp_validate_cert is not defined
+
 - name: Generate random UUID for cluster identifier
   set_fact:
-    cluster_id: '{{ 9999999999999999999999 | random | to_uuid }}'
+    ocp_cluster_id: '{{ 9999999999999999999999 | random | to_uuid }}'
 
 - name: Define OCP Usage configuration defaults
   set_fact:
@@ -142,17 +168,17 @@
     - config_content is defined
     - config_content.get('ocp_api') != OCP_API
     - config_content.get('ocp_token_file') != OCP_TOKEN_PATH
-    - config_content.get('cluster_id') != cluster_id
+    - config_content.get('ocp_cluster_id') != ocp_cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 
 - name: Display New Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
+    msg: 'Use the following value, {{ ocp_cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
   when:
     - config_content is not defined
 
 - name: Display Current Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ config_content.get("cluster_id") }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
+    msg: 'Use the following value, {{ config_content.get("ocp_cluster_id") }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
   when:
     - config_content is defined
