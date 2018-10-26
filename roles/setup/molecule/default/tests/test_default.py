@@ -23,7 +23,9 @@ def test_manifest_file(host):
     assert host.file(config_file).exists
     assert host.file(config_file).is_file
     assert host.file(config_file).contains(
-        '"ocp_api": "http://127.0.0.1:8443"')
+        '"ocp_api": "http://127.0.0.1:8001"')
     assert host.file(config_file).contains('"ocp_token_file":')
-    assert host.file(config_file).contains('"cluster_id":')
+    assert host.file(config_file).contains('"ocp_cluster_id":')
     assert host.file(config_file).contains('"ocp_metering_namespace":')
+    assert host.file(config_file).contains('"ocp_proxy_port":')
+    assert host.file(config_file).contains('"ocp_validate_cert":')

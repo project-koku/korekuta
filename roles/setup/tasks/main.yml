@@ -1,10 +1,15 @@
 ---
 # tasks file for setup
+- name: validate dependencies
+  import_tasks: validate.yml
+  vars:
+    files:
+      - '{{ setup_insights_client_cmd }}'
 
 - name: Ensure needed variables are set
   fail:
-    msg: "You must supply '-e {{ item }}=<{{ item }}>'.'"
-  when: "{{ item }} is not defined"
+    msg: 'You must supply "-e {{ item }}=<{{ item }}>".'
+  when: '{{ item }} is not defined'
   with_items:
     - OCP_API
     - OCP_TOKEN_PATH
@@ -12,48 +17,74 @@
 
 - name: Check that OCP_TOKEN_PATH exists
   stat:
-    path: "{{ OCP_TOKEN_PATH }}"
+    path: '{{ OCP_TOKEN_PATH }}'
   register: ocp_token_stat_result
 
 - name: OCP_TOKEN_PATH does not exits
   fail:
-    msg: "No file was found for OCP_TOKEN_PATH at '{{ OCP_TOKEN_PATH }}'."
+    msg: 'No file was found for OCP_TOKEN_PATH at "{{ OCP_TOKEN_PATH }}".'
   when:
     - not ocp_token_stat_result.stat.exists
 
+- name: Set OCP Proxy Port
+  set_fact:
+    ocp_proxy_port: '{{ OCP_PROXY_PORT }}'
+  when:
+    - OCP_PROXY_PORT is defined
+    - OCP_PROXY_PORT is number
+
+- name: Set OCP Proxy Port to default
+  set_fact:
+    ocp_proxy_port: '{{ setup_default_proxy_port }}'
+  when:
+    - ocp_proxy_port is not defined
+
+- name: Set OCP SSL certificate validation
+  set_fact:
+    ocp_validate_cert: '{{ OCP_SSL_CERT_VALIDATION | bool }}'
+  when:
+    - OCP_SSL_CERT_VALIDATION is defined
+    - '{{ OCP_SSL_CERT_VALIDATION | bool }}'
+
+- name: Set OCP SSL certificate validation default
+  set_fact:
+    ocp_validate_cert: '{{ setup_default_validate_cert }}'
+  when:
+    - ocp_validate_cert is not defined
+
 - name: Generate random UUID for cluster identifier
   set_fact:
-    cluster_id: "{{ 9999999999999999999999 | random | to_uuid }}"
+    ocp_cluster_id: '{{ 9999999999999999999999 | random | to_uuid }}'
 
 - name: Define OCP Usage configuration defaults
   set_fact:
-    ocp_usage_config_dir: "{{ ansible_env.HOME }}/.config/ocp_usage"
-    ocp_usage_config_file: "{{ ansible_env.HOME }}/.config/ocp_usage/config.json"
+    ocp_usage_config_dir: '{{ ansible_env.HOME }}/.config/ocp_usage'
+    ocp_usage_config_file: '{{ ansible_env.HOME }}/.config/ocp_usage/config.json'
   when:
     - OCP_USAGE_CONFIG_DIR is not defined
 
 - name: Define OCP Usage configuration
   set_fact:
-    ocp_usage_config_dir: "{{ OCP_USAGE_CONFIG_DIR }}"
-    ocp_usage_config_file: "{{ OCP_USAGE_CONFIG_DIR }}/config.json"
+    ocp_usage_config_dir: '{{ OCP_USAGE_CONFIG_DIR }}'
+    ocp_usage_config_file: '{{ OCP_USAGE_CONFIG_DIR }}/config.json'
   when:
     - OCP_USAGE_CONFIG_DIR is defined
 
 - name: Create config data location
   file:
-    path: "{{ ocp_usage_config_dir }}"
+    path: '{{ ocp_usage_config_dir }}'
     state: directory
     mode: 0755
 
 - name: Check that OCP Usage configuration exists
   stat:
-    path: "{{ ocp_usage_config_file }}"
+    path: '{{ ocp_usage_config_file }}'
   register: ocp_usage_config_stat_result
 
 - name: Fetch OCP config file
   fetch:
-    src: "{{ ocp_usage_config_file }}"
-    dest: "/tmp/ocp_config.json"
+    src: '{{ ocp_usage_config_file }}'
+    dest: '/tmp/ocp_config.json'
     flat: true
     fail_on_missing: true
   when:
@@ -61,39 +92,65 @@
 
 - name: Read in OCP configuration file
   include_vars:
-    file: "/tmp/ocp_config.json"
+    file: '/tmp/ocp_config.json'
     name: config_content
   when:
     - ocp_usage_config_stat_result.stat.exists
 
-- name: Install Openshift Python prerequisites
-  yum:
-    name: ["python-setuptools", "python-pip", "python-wheel"]
-    state: present
-  become: true
+- name: Read the OCP token
+  command: 'cat {{ OCP_TOKEN_PATH }}'
+  register: cat_token
+  changed_when: false
 
-- name: Upgrade setuptools and pip to latest
-  pip:
-    name: ["setuptools", "pip"]
-    extra_args: --upgrade
-  become: true
+- name: Log in to OCP cluster
+  command: '{{ setup_oc_command }} login {{ OCP_API }} --token {{ cat_token.stdout }}'
+  when: cat_token.stdout is defined and cat_token != ''
 
-- name: Install Openshift Python
-  pip:
-    name: openshift
-    extra_args: --ignore-installed ipaddress
-  become: true
+- name: Switch to Operator Metering project
+  command: '{{ setup_oc_command }} project {{ OCP_METERING_NAMESPACE }}'
+  register: oc_project
+  changed_when: false
+  when:
+    - setup_reports
 
-- name: Execute Openshift definition files
-  k8s:
-    state: present
-    definition: "{{ item | from_yaml }}"
-    host: "{{ OCP_API }}"
-    key_file: "{{ OCP_TOKEN_PATH }}"
-    namespace: "{{ OCP_METERING_NAMESPACE }}"
-  with_file:
-    - "files/hccm_openshift_usage_report_generation_query.yaml"
-    - "files/hccm_openshift_usage_report.yaml"
+- name: Check for hccm-usage-report Report
+  command: '{{ setup_oc_command }} get Report {{ setup_report_name }}'
+  register: oc_get_report
+  changed_when: false
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+
+- name: Check for hccm-usage-report ReportGenerationQuery
+  command: '{{ setup_oc_command }} get ReportGenerationQuery {{ setup_report_name }}'
+  register: oc_get_report_generation_query
+  changed_when: false
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+
+- name: Copy hccm-usage-report files
+  copy:
+    src: '{{ item }}'
+    dest: '/tmp/'
+  with_fileglob:
+    - 'files/hccm_openshift_usage_report*'
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+    - oc_get_report.rc is defined and  oc_get_report.rc != 0
+    - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
+
+- name: Create Operator Metering definitions
+  command: '{{ setup_oc_command }} create -f {{ item }}'
+  with_items:
+    - '/tmp/hccm_openshift_usage_report_generation_query.yaml'
+    - '/tmp/hccm_openshift_usage_report.yaml'
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+    - oc_get_report.rc is defined and  oc_get_report.rc != 0
+    - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
 
 - name: Create new setup data configuration
   template:
@@ -111,17 +168,17 @@
     - config_content is defined
     - config_content.get('ocp_api') != OCP_API
     - config_content.get('ocp_token_file') != OCP_TOKEN_PATH
-    - config_content.get('cluster_id') != cluster_id
+    - config_content.get('ocp_cluster_id') != ocp_cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
 
 - name: Display New Cluster Identifier
   debug:
-    msg: "Use the following value, {{ cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management."
+    msg: 'Use the following value, {{ ocp_cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
   when:
     - config_content is not defined
 
 - name: Display Current Cluster Identifier
   debug:
-    msg: "Use the following value, {{ config_content.get('cluster_id') }}, for the cluster identifier when configuring an OCP provider in Cost Management."
+    msg: 'Use the following value, {{ config_content.get("ocp_cluster_id") }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
   when:
     - config_content is defined

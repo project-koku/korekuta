@@ -1,7 +1,7 @@
 ---
 - name: Prepare
   hosts: all
-
+  gather_facts: true
 
   vars:
     KUBE_CONFIG:
@@ -25,62 +25,25 @@
             token: o6tv5qedPqzJy_AWRb_y9OOHhB6ffTZM-7ecpCgthCY
 
   tasks:
+    - name: install openshift client
+      include_role:
+        name: andrewrothstein.openshift-origin-client-tools
+
+    - name: create symlink to simulate insights client
+      file:
+        path: '/usr/bin/insights-client'
+        src: '/bin/true'
+        state: link
+
     - name: Create OCP token file
       copy:
         dest: "{{ ansible_env.HOME }}/ocp_token"
         content: "1lW78hdXzo-t6EaEBvhzf0hT7YaCUJjj78kcA6LtiEc"
 
-    - name: Create ~/.kube directory
+    - name: create test webserver dir
       file:
-        path: "{{ ansible_env.HOME }}/.kube"
-        state: directory
-        mode: 0755
-
-    - name: Create ~/.kube/config file
-      copy:
-        dest: "{{ ansible_env.HOME }}/.kube/config"
-        content: "{{ KUBE_CONFIG | to_yaml }}"
-
-    - name: View ~/.kube/config file
-      command: "cat {{ ansible_env.HOME }}/.kube/config"
-
-    - name: Install EPEL Release
-      yum:
-        name: "epel-release"
-        state: present
-      become: true
-
-    - name: Install Nodejs 8 release prerequisites
-      yum:
-        name: ["gcc-c++", "make"]
-        state: present
-      become: true
-
-    - name: Install Nodejs 8 release
-      yum:
-        name: nodejs
-        state: present
-      become: true
-
-    - name: Install "json-server" node.js package globally.
-      npm:
-        name: json-server
-        global: true
-
-    - name: Create mock Openshift server directory
-      file:
-        path: "/tmp/www/"
+        path: '/tmp/www/api/v1/namespaces/metering'
         state: directory
 
-    - name: Create mock Openshift server db.json
-      copy:
-        dest: "/tmp/www/db.json"
-        content: '{"api":[{"id":"v1","kind":"APIResourceList","groupVersion":"v1","resources":[{"name":"bindings","singularName":"","namespaced":true,"kind":"Binding","verbs":["create"]},{"name":"componentstatuses","singularName":"","namespaced":false,"kind":"ComponentStatus","verbs":["get","list"],"shortNames":["cs"]},{"name":"configmaps","singularName":"","namespaced":true,"kind":"ConfigMap","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["cm"]},{"name":"endpoints","singularName":"","namespaced":true,"kind":"Endpoints","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["ep"]},{"name":"events","singularName":"","namespaced":true,"kind":"Event","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["ev"]},{"name":"limitranges","singularName":"","namespaced":true,"kind":"LimitRange","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["limits"]},{"name":"namespaces","singularName":"","namespaced":false,"kind":"Namespace","verbs":["create","delete","get","list","patch","update","watch"],"shortNames":["ns"]},{"name":"namespaces/finalize","singularName":"","namespaced":false,"kind":"Namespace","verbs":["update"]},{"name":"namespaces/status","singularName":"","namespaced":false,"kind":"Namespace","verbs":["get","patch","update"]},{"name":"nodes","singularName":"","namespaced":false,"kind":"Node","verbs":["create","delete","deletecollection","get","list","patch","proxy","update","watch"],"shortNames":["no"]},{"name":"nodes/proxy","singularName":"","namespaced":false,"kind":"Node","verbs":[]},{"name":"nodes/status","singularName":"","namespaced":false,"kind":"Node","verbs":["get","patch","update"]},{"name":"persistentvolumeclaims","singularName":"","namespaced":true,"kind":"PersistentVolumeClaim","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["pvc"]},{"name":"persistentvolumeclaims/status","singularName":"","namespaced":true,"kind":"PersistentVolumeClaim","verbs":["get","patch","update"]},{"name":"persistentvolumes","singularName":"","namespaced":false,"kind":"PersistentVolume","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["pv"]},{"name":"persistentvolumes/status","singularName":"","namespaced":false,"kind":"PersistentVolume","verbs":["get","patch","update"]},{"name":"pods","singularName":"","namespaced":true,"kind":"Pod","verbs":["create","delete","deletecollection","get","list","patch","proxy","update","watch"],"shortNames":["po"],"categories":["all"]},{"name":"pods/attach","singularName":"","namespaced":true,"kind":"Pod","verbs":[]},{"name":"pods/binding","singularName":"","namespaced":true,"kind":"Binding","verbs":["create"]},{"name":"pods/eviction","singularName":"","namespaced":true,"group":"policy","version":"v1beta1","kind":"Eviction","verbs":["create"]},{"name":"pods/exec","singularName":"","namespaced":true,"kind":"Pod","verbs":[]},{"name":"pods/log","singularName":"","namespaced":true,"kind":"Pod","verbs":["get"]},{"name":"pods/portforward","singularName":"","namespaced":true,"kind":"Pod","verbs":[]},{"name":"pods/proxy","singularName":"","namespaced":true,"kind":"Pod","verbs":[]},{"name":"pods/status","singularName":"","namespaced":true,"kind":"Pod","verbs":["get","patch","update"]},{"name":"podtemplates","singularName":"","namespaced":true,"kind":"PodTemplate","verbs":["create","delete","deletecollection","get","list","patch","update","watch"]},{"name":"replicationcontrollers","singularName":"","namespaced":true,"kind":"ReplicationController","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["rc"],"categories":["all"]},{"name":"replicationcontrollers/scale","singularName":"","namespaced":true,"group":"autoscaling","version":"v1","kind":"Scale","verbs":["get","patch","update"]},{"name":"replicationcontrollers/status","singularName":"","namespaced":true,"kind":"ReplicationController","verbs":["get","patch","update"]},{"name":"resourcequotas","singularName":"","namespaced":true,"kind":"ResourceQuota","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["quota"]},{"name":"resourcequotas/status","singularName":"","namespaced":true,"kind":"ResourceQuota","verbs":["get","patch","update"]},{"name":"secrets","singularName":"","namespaced":true,"kind":"Secret","verbs":["create","delete","deletecollection","get","list","patch","update","watch"]},{"name":"securitycontextconstraints","singularName":"","namespaced":false,"kind":"SecurityContextConstraints","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["scc"]},{"name":"serviceaccounts","singularName":"","namespaced":true,"kind":"ServiceAccount","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["sa"]},{"name":"services","singularName":"","namespaced":true,"kind":"Service","verbs":["create","delete","get","list","patch","proxy","update","watch"],"shortNames":["svc"],"categories":["all"]},{"name":"services/proxy","singularName":"","namespaced":true,"kind":"Service","verbs":[]},{"name":"services/status","singularName":"","namespaced":true,"kind":"Service","verbs":["get","patch","update"]}]}],"version":{"major":"1","minor":"9","gitVersion":"v1.9.1+a0ce1bc657","gitCommit":"a0ce1bc","gitTreeState":"clean","buildDate":"2018-08-20T21:57:04Z","goVersion":"go1.9.4","compiler":"gc","platform":"linux/amd64"},"apis":{"kind":"APIGroupList","apiVersion":"v1","groups":[{"name":"metering.openshift.io","versions":[{"groupVersion":"metering.openshift.io/v1alpha1","version":"v1alpha1"}],"preferredVersion":{"groupVersion":"metering.openshift.io/v1alpha1","version":"v1alpha1"},"serverAddressByClientCIDRs":null}]},"metering.openshift.io":{"kind":"APIResourceList","apiVersion":"v1alpha1","groupVersion":"metering.openshift.io/v1alpha1","resources":[{"name":"reportgen","singularName":"","namespaced":true,"kind":"ReportGenerationQuery","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["rg"],"categories":["all"]},{"name":"report","singularName":"","namespaced":true,"kind":"Report","verbs":["create","delete","deletecollection","get","list","patch","update","watch"],"shortNames":["rpt"],"categories":["all"]}]},"metering.openshift.io.report":{"apiVersion":"metering.openshift.io/v1alpha1","kind":"Report","metadata":{"name":"hccm-openshift-usage","namespace":"metering"},"spec":{"reportingStart":"2018-10-01T00:00:00Z","reportingEnd":"2018-10-02T23:59:59Z","generationQuery":"hccm-openshift-usage","runImmediately":true}},"metering.openshift.io.reportgen":{},"metering.openshift.io.reportgen.hccm":{}}'
-
-    - name: Create mock Openshift server routes.json
-      copy:
-        dest: "/tmp/www/routes.json"
-        content: '{"/apis/metering.openshift.io/v1alpha1":"/metering.openshift.io","/apis/metering.openshift.io/v1alpha1/namespaces/metering/report":"/metering.openshift.io.report","/apis/metering.openshift.io/v1alpha1/namespaces/metering/reportgen/hccm-openshift-usage":"/metering.openshift.io.reportgen","/apis/metering.openshift.io/v1alpha1/namespaces/metering/report/hccm-openshift-usage":"/metering.openshift.io.reportgen.hccm"}'
-
-    - name: Launch mock Openshift server
-      shell: nohup json-server /tmp/www/db.json -p 8443 --routes /tmp/www/routes.json </dev/null >/dev/null 2>&1 &
+    - name: launch test web server
+      shell: cd /tmp/www; nohup python -m SimpleHTTPServer 8001 </dev/null >/dev/null 2>&1 &

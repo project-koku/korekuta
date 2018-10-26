@@ -26,13 +26,25 @@
     files:
       - '{{ ocp_config["ocp_token_file"] }}'
 
-- name: Define OCP API endpoint
+- name: Define OCP API endpoint without proxy
   set_fact:
     collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}'
+  when: not collect_with_proxy
 
-- name: Define OCP API URL
+- name: Define OCP API endpoint with proxy
+  set_fact:
+    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
+  when: collect_with_proxy
+
+- name: Define OCP API URL without proxy
   set_fact:
     collect_endpoint_url: '{{ ocp_config["ocp_api"] }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
+  when: not collect_with_proxy
+
+- name: Define OCP API URL with proxy
+  set_fact:
+    collect_endpoint_url: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}/{{ collect_endpoint_path }}{{ collect_endpoint_params }}'
+  when: collect_with_proxy
 
 - name: Create temp dir for downloaded files
   file:
@@ -49,13 +61,16 @@
   when: cat_token.stdout is defined and cat_token != ''
 
 - name: Run OC Proxy
-  command: 'nohup {{ collect_oc_command }} proxy >/dev/null 2>&1 &'
+  command: 'nohup {{ collect_oc_command }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'
+  async: 120
+  poll: 0
   when: collect_with_proxy and cat_token.stdout is defined and cat_token != ''
 
 - name: Download OCP report from endpoint
   get_url:
     url: '{{ collect_endpoint_url }}'
     dest: '{{ collect_download_path }}/korekuta-collect-report.{{ collect_format }}'
+    validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
   register: download_result
 
 - name: set csv_filename fact
@@ -75,15 +90,16 @@
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
-- name: Send payload to the Insights client
-  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }}'
+- name: Send payload to the Insights Client
+  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }} --content-type={{ collect_content_type }}'
   environment:
-    BYPASS_GPG=True
-    EGG=/etc/insights-client/rpm.egg
-  when: archive_result.state == 'archive' or archive_result.state == 'compress'
+    BYPASS_GPG: 'True'
+    EGG: '/etc/insights-client/rpm.egg'
+  become: true
+  when: archive_result.state == 'file'
 
 - name: Remove temp files
   file:
-    path: '{{ collect_download_path.path }}'
+    path: '{{ collect_download_path }}'
     state: absent
   when: collect_delete_after

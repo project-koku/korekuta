@@ -42,6 +42,10 @@ usage() {
          -e OCP_TOKEN_PATH=/path/to/file/with/ocp/token
     * Provide Openshift Metering Namespace:
          -e OCP_METERING_NAMESPACE=metering
+    * Provide Openshift Proxy Port (defaults to 8001):
+         -e OCP_PROXY_PORT=8001
+    * Validate Openshift SSL Certifates  (defaults to false):
+         -e OCP_SSL_CERT_VALIDATION=false
 EOM
     exit 0
 }
@@ -93,14 +97,8 @@ then
   exit 1
 fi
 
-if [[ ($tag == $SETUP_TAG) ]]
-then
-  echo ansible-playbook $PLAYBOOKFILE -K -v $tag ${@:2}
-  ansible-playbook $PLAYBOOKFILE -K -v $tag ${@:2}
-else
-  echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-  ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-fi
+echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
 
 if [ $? -eq 0 ]
 then
