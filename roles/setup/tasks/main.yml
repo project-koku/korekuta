@@ -117,6 +117,7 @@
   command: '{{ setup_oc_command }} get Report {{ setup_report_name }}'
   register: oc_get_report
   changed_when: false
+  ignore_errors: true
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
@@ -125,6 +126,7 @@
   command: '{{ setup_oc_command }} get ReportGenerationQuery {{ setup_report_name }}'
   register: oc_get_report_generation_query
   changed_when: false
+  ignore_errors: true
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
