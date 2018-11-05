@@ -1,0 +1,46 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportGenerationQuery
+metadata:
+  name: "pod-cpu-limit-raw"
+  labels:
+    operator-metering: "true"
+spec:
+  reportDataSources:
+    - "pod-limit-cpu-cores"
+  columns:
+    - name: pod
+      type: string
+      unit: kubernetes_pod
+    - name: namespace
+      type: string
+      unit: kubernetes_namespace
+    - name: node
+      type: string
+      unit: kubernetes_node
+    - name: labels
+      type: map<string, string>
+      tableHidden: true
+    - name: pod_limit_cpu_cores
+      type: double
+      unit: cpu_cores
+    - name: timeprecision
+      type: double
+      unit: seconds
+    - name: pod_limit_cpu_core_seconds
+      type: double
+      unit: cpu_core_seconds
+    - name: timestamp
+      type: timestamp
+      unit: date
+  query: |
+      SELECT labels['pod'] as pod,
+          labels['namespace'] as namespace,
+          element_at(labels, 'node') as node,
+          labels,
+          amount as pod_limit_cpu_cores,
+          timeprecision,
+          amount * timeprecision as pod_limit_cpu_core_seconds,
+          "timestamp"
+      FROM {| dataSourceTableName "pod-limit-cpu-cores" |}
+      WHERE element_at(labels, 'node') IS NOT NULL
