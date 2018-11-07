@@ -56,7 +56,7 @@ spec:
     - name: node_capacity_memory_byte_seconds
       type: double
       unit: byte_seconds
-    - name: labels
+    - name: pod_labels
       type: string
   inputs:
     - name: ReportingStart
@@ -152,7 +152,7 @@ spec:
       SELECT namespace,
         pod,
         date_trunc('hour', "timestamp") as interval_start,
-        array_join(map_values(transform_values(map_filter(map_union(labels), (k, v) -> k LIKE 'label_%'), (k, v) -> concat(k, ':', v))), '|') as labels
+        array_join(map_values(transform_values(map_filter(map_union(labels), (k, v) -> k LIKE 'label_%'), (k, v) -> concat(k, ':', v))), '|') as pod_labels
       FROM {| generationQueryViewName "pod-labels" |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" <= timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
@@ -176,7 +176,7 @@ spec:
       NCC.node_capacity_cpu_core_seconds,
       NMC.node_capacity_memory_bytes,
       NMC.node_capacity_memory_byte_seconds,
-      PL.labels
+      PL.pod_labels
     FROM cte_hourly_pod_cpu_usage AS PCUR
     JOIN cte_hourly_pod_cpu_requests AS PCRR
         ON PCUR.pod = PCRR.pod
