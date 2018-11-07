@@ -5,4 +5,4 @@ metadata:
  name: kube-pod-labels
 spec:
  promsum:
-   query: "kube-pod-labels"
+  query: "kube-pod-labels"
