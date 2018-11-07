@@ -56,6 +56,8 @@ spec:
     - name: node_capacity_memory_byte_seconds
       type: double
       unit: byte_seconds
+    - name: labels
+      type: string
   inputs:
     - name: ReportingStart
     - name: ReportingEnd
@@ -145,6 +147,16 @@ spec:
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" <= timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
       GROUP BY node, date_trunc('hour', "timestamp")
+    ),
+    cte_hourly_pod_labels AS (
+      SELECT namespace,
+        pod,
+        date_trunc('hour', "timestamp") as interval_start,
+        array_join(map_values(transform_values(map_filter(map_union(labels), (k, v) -> k LIKE 'label_%'), (k, v) -> concat(k, ':', v))), '|') as labels
+      FROM {| generationQueryViewName "pod-labels" |}
+      WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
+        AND "timestamp" <= timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
+      GROUP BY namespace, pod, date_trunc('hour', "timestamp")
     )
     SELECT
       timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart| prestoTimestamp |}' AS report_period_start,
@@ -163,7 +175,8 @@ spec:
       NCC.node_capacity_cpu_cores,
       NCC.node_capacity_cpu_core_seconds,
       NMC.node_capacity_memory_bytes,
-      NMC.node_capacity_memory_byte_seconds
+      NMC.node_capacity_memory_byte_seconds,
+      PL.labels
     FROM cte_hourly_pod_cpu_usage AS PCUR
     JOIN cte_hourly_pod_cpu_requests AS PCRR
         ON PCUR.pod = PCRR.pod
@@ -196,6 +209,10 @@ spec:
     JOIN cte_hourly_node_capacity_memory AS NMC
         ON PCUR.node = NMC.node
           AND PCUR.interval_start = NMC.interval_start
+    JOIN cte_hourly_pod_labels AS PL
+        ON PCUR.namespace = PL.namespace
+          AND PCUR.pod = PL.pod
+          AND PCUR.interval_start = PL.interval_start
   reportQueries:
     - pod-cpu-usage-raw
     - pod-cpu-request-raw
@@ -205,5 +222,6 @@ spec:
     - pod-memory-limit-raw
     - node-cpu-capacity
     - node-memory-capacity
+    - pod-labels
   view:
     disabled: true
