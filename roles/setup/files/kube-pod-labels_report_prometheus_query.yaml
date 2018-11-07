@@ -1,0 +1,8 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportPrometheusQuery
+metadata:
+ name: kube-pod-labels
+spec:
+ query: |
+   kube_pod_labels
