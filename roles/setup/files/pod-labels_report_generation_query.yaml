@@ -1,0 +1,26 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportGenerationQuery
+metadata:
+  name: "pod-labels"
+spec:
+  reportDataSources:
+    - "kube-pod-labels"
+  columns:
+    - name: pod
+      type: string
+      unit: kubernetes_pod
+    - name: namespace
+      type: string
+      unit: kubernetes_namespace
+    - name: labels
+      type: map<string, string>
+    - name: timestamp
+      type: timestamp
+      unit: date
+  query: |
+    SELECT labels['pod'] as pod,
+        labels['namespace'] as namespace,
+        labels,
+        "timestamp"
+    FROM {| dataSourceTableName "kube-pod-labels" |}
