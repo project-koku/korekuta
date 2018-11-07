@@ -146,6 +146,9 @@
 - name: Create Operator Metering definitions
   command: '{{ setup_oc_command }} create -f {{ item }}'
   with_items:
+    - '/tmp/kube-pod-labels_report_prometheus_query.yaml'
+    - '/tmp/kube-pod-labels_report_data_source.yaml'
+    - '/tmp/pod-labels_report_generation_query.yaml'
     - '/tmp/pod-limit-cpu-cores_report_generation_query.yaml'
     - '/tmp/pod-limit-memory-bytes_report_generation_query.yaml'
     - '/tmp/hccm_openshift_usage_report_generation_query.yaml'
