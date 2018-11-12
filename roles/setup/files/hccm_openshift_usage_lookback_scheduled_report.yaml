@@ -6,8 +6,8 @@ metadata:
 spec:
   generationQuery: "hccm-openshift-usage-lookback"
   inputs:
-  - name: "ReportName"
-    value: "hccm-openshift-usage"
-  gracePeriod: "10m" # wait for sub-query to finish
+    - name: "ReportName"
+      value: "hccm-openshift-usage"
+  gracePeriod: "10m"  # wait for sub-query to finish
   schedule:
     period: "hourly"
