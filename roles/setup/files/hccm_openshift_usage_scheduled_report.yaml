@@ -1,0 +1,9 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ScheduledReport
+metadata:
+  name: hccm-openshift-usage
+spec:
+  generationQuery: "hccm-openshift-usage"
+  schedule:
+    period: "hourly"
