@@ -42,6 +42,7 @@
 - name: Set OCP SSL certificate validation
   set_fact:
     ocp_validate_cert: '{{ OCP_SSL_CERT_VALIDATION | bool }}'
+    ocp_insecure_login: '--insecure-skip-tls-verify={{ OCP_SSL_CERT_VALIDATION | bool }}'
   when:
     - OCP_SSL_CERT_VALIDATION is defined
     - '{{ OCP_SSL_CERT_VALIDATION | bool }}'
@@ -49,8 +50,10 @@
 - name: Set OCP SSL certificate validation default
   set_fact:
     ocp_validate_cert: '{{ setup_default_validate_cert }}'
+    ocp_insecure_login: '--insecure-skip-tls-verify=true'
   when:
     - ocp_validate_cert is not defined
+
 
 - name: Generate random UUID for cluster identifier
   set_fact:
@@ -103,7 +106,7 @@
   changed_when: false
 
 - name: Log in to OCP cluster
-  command: '{{ setup_oc_command }} login {{ OCP_API }} --token {{ cat_token.stdout }}'
+  command: '{{ setup_oc_command }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
 
 - name: Switch to Operator Metering project

@@ -26,6 +26,16 @@
     files:
       - '{{ ocp_config["ocp_token_file"] }}'
 
+- name: Default OCP insecure login option
+  set_fact:
+    ocp_insecure_login: '--insecure-skip-tls-verify=false'
+
+- name: Set OCP insecure login option
+  set_fact:
+    ocp_insecure_login: '--insecure-skip-tls-verify=true'
+  when:
+    - 'not {{ ocp_config["ocp_validate_cert"] | bool }}'
+
 - name: Define OCP API endpoint without proxy
   set_fact:
     collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}'
@@ -57,7 +67,7 @@
   changed_when: false
 
 - name: Log in to OCP cluster
-  command: '{{ collect_oc_command }} login {{ ocp_config["ocp_api"] }} --token {{ cat_token.stdout }}'
+  command: '{{ collect_oc_command }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
 
 - name: Run OC Proxy
