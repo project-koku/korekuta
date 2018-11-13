@@ -11,3 +11,4 @@ spec:
   gracePeriod: "10m"  # wait for sub-query to finish
   schedule:
     period: "hourly"
+  overwriteExistingData: true
