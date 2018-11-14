@@ -155,7 +155,9 @@
     - '/tmp/pod-limit-cpu-cores_report_generation_query.yaml'
     - '/tmp/pod-limit-memory-bytes_report_generation_query.yaml'
     - '/tmp/hccm_openshift_usage_report_generation_query.yaml'
-    - '/tmp/hccm_openshift_usage_report.yaml'
+    - '/tmp/hccm_openshift_usage_lookback_report_generation_query.yaml'
+    - '/tmp/hccm_openshift_usage_lookback_scheduled_report.yaml'
+    - '/tmp/hccm_openshift_usage_scheduled_report.yaml'
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''

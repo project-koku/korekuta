@@ -43,7 +43,7 @@
 
 - name: Define OCP API endpoint with proxy
   set_fact:
-    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
+    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_config["ocp_metering_namespace"] }}/services/https:reporting-operator:http/proxy/api/v1/scheduledreports/get'
   when: collect_with_proxy
 
 - name: Define OCP API URL without proxy
