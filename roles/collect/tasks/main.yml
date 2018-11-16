@@ -79,7 +79,7 @@
 - name: Download OCP report from endpoint
   get_url:
     url: '{{ collect_endpoint_url }}'
-    dest: '{{ collect_download_path }}/korekuta-collect-report.{{ collect_format }}'
+    dest: '{{ collect_download_path }}/{{ collect_csv_uuid }}_openshift_usage_report.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
   register: download_result
 
@@ -96,7 +96,9 @@
   archive:
     format: '{{ collect_archive_format }}'
     dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path: '{{ collect_download_path }}'
+    path: 
+    - '{{ collect_download_path }}/manifest.json'
+    - '{{ collect_download_path }}/{{collect_csv_filename}}'
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
