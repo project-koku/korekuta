@@ -8,3 +8,4 @@
       collect_archive_format: bz2
       collect_oc_command: /usr/local/bin/oc
       collect_with_proxy: false
+      collect_csv_uuid: 'd7449564-67a4-4507-86f2-db70055aa12a'
