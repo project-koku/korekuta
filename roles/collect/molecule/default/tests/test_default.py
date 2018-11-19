@@ -8,6 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disab
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
+csv_uuid = 'd7449564-67a4-4507-86f2-db70055aa12a'  # pylint: disable=invalid-name
 
 
 def test_download_path(host):
@@ -18,18 +19,20 @@ def test_download_path(host):
 
 def test_csv_file(host):
     """Test csv file."""
-    csv_file = download_path + '/korekuta-collect-report.csv'
+    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
+    csv_file = download_path + '/{}'.format(file_name)
     assert host.file(csv_file).exists
     assert host.file(csv_file).is_file
 
 
 def test_manifest_file(host):
     """Test manifest file and contents."""
+    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
     manifest_file = download_path + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
     assert host.file(manifest_file).contains(
-        '"file": "korekuta-collect-report.csv"')
+        '"file": "{}"'.format(file_name))
     assert host.file(manifest_file).contains('"date":')
     assert host.file(manifest_file).contains('"uuid":')
     assert host.file(manifest_file).contains('"cluster_id": "test-cluster-id"')

@@ -1,6 +1,6 @@
 {
     "file": "{{ collect_csv_filename }}",
     "date": "{{ ansible_date_time.iso8601 }}",
-    "uuid": "{{ collect_csv_uuid }}",
+    "uuid": "{{ current_csv_uuid }}",
     "cluster_id": "{{ ocp_config['ocp_cluster_id'] }}"
 }
