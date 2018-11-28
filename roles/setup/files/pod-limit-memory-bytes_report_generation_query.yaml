@@ -33,6 +33,8 @@ spec:
     - name: timestamp
       type: timestamp
       unit: date
+    - name: dt
+      type: string
   query: |
       SELECT labels['pod'] as pod,
           labels['namespace'] as namespace,
@@ -41,6 +43,7 @@ spec:
           amount as pod_limit_memory_bytes,
           timeprecision,
           amount * timeprecision as pod_limit_memory_byte_seconds,
-          "timestamp"
+          "timestamp",
+          dt
       FROM {| dataSourceTableName "pod-limit-memory-bytes" |}
       WHERE element_at(labels, 'node') IS NOT NULL
