@@ -1,7 +1,7 @@
 ---
 # defaults file for setup
 setup_insights_client_cmd: '/usr/bin/insights-client'
-setup_oc_command: 'oc'
+setup_oc_command: '/usr/local/bin/oc'
 setup_reports: true
 setup_report_name: 'hccm-openshift-usage'
 setup_default_proxy_port: 8001
