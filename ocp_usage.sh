@@ -12,6 +12,7 @@
 #===============================================================================
 
 export PATH=$PATH:$ANSIBLE_HOME/bin
+BASEDIR=$(dirname "$0")
 PLAYBOOKFILE="ocp_usage_playbook.yml"
 SETUP_TAG="--tags=setup"
 COLLECT_TAG="--tags=collect"
@@ -97,8 +98,8 @@ then
   exit 1
 fi
 
-echo ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
-ansible-playbook $PLAYBOOKFILE -v $tag ${@:2}
+echo ansible-playbook $BASEDIR/$PLAYBOOKFILE -v $tag ${@:2}
+ansible-playbook $BASEDIR/$PLAYBOOKFILE -v $tag ${@:2}
 
 if [ $? -eq 0 ]
 then
