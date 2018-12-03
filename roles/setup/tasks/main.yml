@@ -54,6 +54,16 @@
   when:
     - ocp_validate_cert is not defined
 
+- name: Check for OC command-line
+  stat:
+    path: '{{ OCP_CLI }}'
+  register: check_oc
+
+- name: OCP_CLI does not exits
+  fail:
+    msg: 'No file was found for OCP_CLI at "{{ OCP_CLI }}".'
+  when:
+    - not check_oc.stat.exists
 
 - name: Generate random UUID for cluster identifier
   set_fact:
@@ -106,18 +116,18 @@
   changed_when: false
 
 - name: Log in to OCP cluster
-  command: '{{ setup_oc_command }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
+  command: '{{ OCP_CLI }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
 
 - name: Switch to Operator Metering project
-  command: '{{ setup_oc_command }} project {{ OCP_METERING_NAMESPACE }}'
+  command: '{{ OCP_CLI }} project {{ OCP_METERING_NAMESPACE }}'
   register: oc_project
   changed_when: false
   when:
     - setup_reports
 
 - name: Check for hccm-usage-report Report
-  command: '{{ setup_oc_command }} get Report {{ setup_report_name }}'
+  command: '{{ OCP_CLI }} get Report {{ setup_report_name }}'
   register: oc_get_report
   changed_when: false
   ignore_errors: true
@@ -126,7 +136,7 @@
     - oc_project.stdout is defined and oc_project != ''
 
 - name: Check for hccm-usage-report ReportGenerationQuery
-  command: '{{ setup_oc_command }} get ReportGenerationQuery {{ setup_report_name }}'
+  command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_report_name }}'
   register: oc_get_report_generation_query
   changed_when: false
   ignore_errors: true
@@ -147,7 +157,7 @@
     - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
 
 - name: Create Operator Metering definitions
-  command: '{{ setup_oc_command }} create -f {{ item }}'
+  command: '{{ OCP_CLI }} create -f {{ item }}'
   with_items:
     - '/tmp/kube-pod-labels_report_prometheus_query.yaml'
     - '/tmp/kube-pod-labels_report_data_source.yaml'
