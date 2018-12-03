@@ -43,6 +43,8 @@ usage() {
          -e OCP_TOKEN_PATH=/path/to/file/with/ocp/token
     * Provide Openshift Metering Namespace:
          -e OCP_METERING_NAMESPACE=metering
+    * Provide Openshift Container Platform CLI (defaults to /usr/bin/oc):
+         -e OCP_CLI=/usr/local/bin/oc
     * Provide Openshift Proxy Port (defaults to 8001):
          -e OCP_PROXY_PORT=8001
     * Validate Openshift SSL Certifates  (defaults to false):

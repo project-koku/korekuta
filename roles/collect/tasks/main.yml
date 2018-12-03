@@ -26,6 +26,17 @@
     files:
       - '{{ ocp_config["ocp_token_file"] }}'
 
+- name: Check for OC command-line
+  stat:
+    path: '{{ OCP_CLI }}'
+  register: check_oc
+
+- name: OCP_CLI does not exits
+  fail:
+    msg: 'No file was found for OCP_CLI at "{{ OCP_CLI }}".'
+  when:
+    - not check_oc.stat.exists
+
 - name: Default OCP insecure login option
   set_fact:
     ocp_insecure_login: '--insecure-skip-tls-verify=false'
@@ -71,11 +82,11 @@
   changed_when: false
 
 - name: Log in to OCP cluster
-  command: '{{ collect_oc_command }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
+  command: '{{ OCP_CLI }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
 
 - name: Run OC Proxy
-  command: 'nohup {{ collect_oc_command }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'
+  command: 'nohup {{ OCP_CLI }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'
   async: 120
   poll: 0
   when: collect_with_proxy and cat_token.stdout is defined and cat_token != ''

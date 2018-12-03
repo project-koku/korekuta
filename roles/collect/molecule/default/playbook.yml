@@ -6,6 +6,6 @@
       collect_delete_after: false
       collect_ocp_config_file: '/tmp/ocp-test-config.json'
       collect_archive_format: bz2
-      collect_oc_command: /usr/local/bin/oc
+      OCP_CLI: /usr/local/bin/oc
       collect_with_proxy: false
       collect_csv_uuid: 'd7449564-67a4-4507-86f2-db70055aa12a'
