@@ -149,7 +149,9 @@
     src: '{{ item }}'
     dest: '/tmp/'
   with_fileglob:
-    - 'files/hccm_openshift_usage_report*'
+    - 'files/kube*'
+    - 'files/pod*'
+    - 'files/hccm*'
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
