@@ -1027,10 +1027,10 @@
         },
         "yamllint": {
             "hashes": [
-                "sha256:93e255e4bd96c7c0850bf182b09f6b35625130f15b37a0e03d8bf378d747081c",
-                "sha256:e9b7dec24921ef13180902e5dbcaae9157c773e3e3e2780ef77d3a4dd67d799f"
+                "sha256:23041a54139691ee0a25622dfcbe529a1d44b4d0d7a5f42097864ac7fb66645f",
+                "sha256:c0a9b641c9f843901fc9261ed71b36f3968c9b04f4c26581cc836d0cabb62a75"
             ],
-            "version": "==1.11.1"
+            "version": "==1.14.0"
         }
     }
 }
