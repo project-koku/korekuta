@@ -14,7 +14,7 @@ openshift = "==0.8.4"
 
 [dev-packages]
 
-tox = "==3.6.1"
+tox = "==3.7.0"
 molecule = "==2.19.0"
 flake8 = "==3.5.0"
 pylint = "==2.2.2"
