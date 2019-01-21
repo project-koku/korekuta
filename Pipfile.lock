@@ -234,10 +234,9 @@
         },
         "openshift": {
             "hashes": [
-                "sha256:72fdbbf004a726f59f329298d94520dc524a84052b71c27c8ed05915a9b50e84"
+                "sha256:0e6a9f6ffc0b127794dce9f4ea658f055d3df5699bec3d2ee89a4a53431bad99"
             ],
-            "index": "pypi",
-            "version": "==0.8.2"
+            "version": "==0.8.4"
         },
         "paramiko": {
             "hashes": [
