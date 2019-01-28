@@ -56,6 +56,8 @@ spec:
     - name: node_capacity_memory_byte_seconds
       type: double
       unit: byte_seconds
+    - name: resource_id
+      type: string
     - name: pod_labels
       type: string
   inputs:
@@ -79,6 +81,7 @@ spec:
       node_capacity_cpu_core_seconds,
       node_capacity_memory_bytes,
       node_capacity_memory_byte_seconds,
+      resource_id,
       pod_labels
     FROM {| .Report.Inputs.ReportName | scheduledReportTableName |}
     WHERE {| .Report.Inputs.ReportName | scheduledReportTableName |}.report_period_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
