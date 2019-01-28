@@ -426,9 +426,10 @@
         },
         "ansible-lint": {
             "hashes": [
-                "sha256:7686dad54aab9281562a5788415af1488b9af8a5acc99c042ecb9959b6ab7a57"
+                "sha256:1840e3efc45bd9078d870bbdd4b39c1b80e7fbd7abf94c5e64d838bfbc53b38e",
+                "sha256:fbbf3fddfb50cf6cb7321b450f1b14d7b877a24e6682ae8730eaed48040501d9"
             ],
-            "version": "==3.4.23"
+            "version": "==4.0.1"
         },
         "anyconfig": {
             "hashes": [
