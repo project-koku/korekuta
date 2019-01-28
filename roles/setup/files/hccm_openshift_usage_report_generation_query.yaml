@@ -56,6 +56,8 @@ spec:
     - name: node_capacity_memory_byte_seconds
       type: double
       unit: byte_seconds
+    - name: resource_id
+      type: string
     - name: pod_labels
       type: string
   inputs:
@@ -142,6 +144,7 @@ spec:
     ),
     cte_hourly_node_capacity_cpu AS (
       SELECT node,
+        max(resource_id) as resource_id,
         date_trunc('hour', "timestamp") as interval_start,
         max(node_capacity_cpu_cores) as node_capacity_cpu_cores,
         sum(node_capacity_cpu_core_seconds) as node_capacity_cpu_core_seconds
@@ -194,6 +197,7 @@ spec:
       NCC.node_capacity_cpu_core_seconds,
       NMC.node_capacity_memory_bytes,
       NMC.node_capacity_memory_byte_seconds,
+      NCC.resource_id,
       PL.pod_labels
     FROM cte_hourly_pod_cpu_usage AS PCUR
     JOIN cte_hourly_pod_cpu_requests AS PCRR
