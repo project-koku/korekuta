@@ -1,19 +1,26 @@
 [[source]]
+
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
 docker-py = "==1.10.6"
 ansible = "==2.7.6"
 openshift = "==0.8.4"
 shellingham = "==1.2.8"
 
+
 [dev-packages]
+
 tox = "==3.7.0"
 molecule = "==2.19.0"
-flake8 = "==3.5.0"
+flake8 = "==3.6.0"
 pylint = "==2.2.2"
 
+
 [requires]
+
 python_version = "3.6"
