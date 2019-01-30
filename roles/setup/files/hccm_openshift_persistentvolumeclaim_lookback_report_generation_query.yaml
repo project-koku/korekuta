@@ -1,0 +1,64 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportGenerationQuery
+metadata:
+  name: hccm-openshift-persistentvolumeclaim-lookback
+spec:
+  view:
+    disabled: true
+  columns:
+    - name: report_period_start
+      type: timestamp
+      unit: date
+    - name: report_period_end
+      type: timestamp
+      unit: date
+    - name: interval_start
+      type: timestamp
+      unit: date
+    - name: interval_end
+      type: timestamp
+      unit: date
+    - name: namespace
+      type: string
+      unit: kubernetes_namespace
+    - name: persistentvolumeclaim
+      type: string
+      unit: kubernetes_persistentvolumeclaim
+    - name: persistentvolume
+      type: string
+      unit: kubernetes_persistentvolume
+    - name: storageclass
+      type: string
+      unit: kubernetes_storageclass
+    - name: persistentvolumeclaim_capacity_bytes
+      type: double
+      unit: bytes
+    - name: persistentvolumeclaim_capacity_byte_seconds
+      type: double
+      unit: byte_seconds
+    - name: volume_request_storage_byte_seconds
+      type: double
+      unit: byte_seconds
+    - name: persistentvolumeclaim_usage_byte_seconds
+      type: double
+      unit: byte_seconds
+  inputs:
+    - name: ReportingStart
+    - name: AggregatedReportName
+      required: true
+  query: |
+    SELECT report_period_start,
+      report_period_end,
+      interval_start,
+      interval_end,
+      namespace,
+      persistentvolumeclaim,
+      persistentvolume,
+      storageclass,
+      persistentvolumeclaim_capacity_bytes,
+      persistentvolumeclaim_capacity_byte_seconds,
+      volume_request_storage_byte_seconds,
+      persistentvolumeclaim_usage_byte_seconds
+    FROM {| .Report.Inputs.AggregatedReportName | reportTableName |}
+    WHERE {| .Report.Inputs.AggregatedReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
