@@ -22,6 +22,9 @@ spec:
     - name: namespace
       type: string
       unit: kubernetes_namespace
+    - name: pod
+      type: string
+      unit: kubernetes_pod
     - name: persistentvolumeclaim
       type: string
       unit: kubernetes_persistentvolumeclaim
@@ -43,6 +46,10 @@ spec:
     - name: persistentvolumeclaim_usage_byte_seconds
       type: double
       unit: byte_seconds
+    - name: persistentvolume_labels
+      type: string
+    - name: persistentvolumeclaim_labels
+      type: string
   inputs:
     - name: ReportingStart
     - name: AggregatedReportName
@@ -53,12 +60,15 @@ spec:
       interval_start,
       interval_end,
       namespace,
+      pod,
       persistentvolumeclaim,
       persistentvolume,
       storageclass,
       persistentvolumeclaim_capacity_bytes,
       persistentvolumeclaim_capacity_byte_seconds,
       volume_request_storage_byte_seconds,
-      persistentvolumeclaim_usage_byte_seconds
+      persistentvolumeclaim_usage_byte_seconds,
+      persistentvolume_labels,
+      persistentvolumeclaim_labels
     FROM {| .Report.Inputs.AggregatedReportName | reportTableName |}
     WHERE {| .Report.Inputs.AggregatedReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
