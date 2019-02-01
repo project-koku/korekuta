@@ -48,11 +48,12 @@
     collect_endpoint_params: '?name={{ collect_report_name }}&format={{ collect_format }}&namespace={{ ocp_metering_namespace }}'
     collect_endpoint_path: 'api/v1/namespaces/{{ ocp_metering_namespace }}'
     collect_endpoint_url: '{{ ocp_config["ocp_api"] }}'
+    current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
 
 # conditional tag
 - name: Define facts from OCP config with proxy
   set_fact:
-    collect_endpoint_path: '{{ collect_endpoint_path }}/services/https:reporting-operator:http/proxy/api/v1/scheduledreports/get'
+    collect_endpoint_path: '{{ collect_endpoint_path }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
     collect_endpoint_url: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}'
   tags: with_proxy
 
@@ -84,7 +85,7 @@
 - name: Download OCP report from endpoint
   get_url:
     url: '{{ collect_endpoint_url }}'
-    dest: '{{ collect_download_path }}/{{ collect_csv_uuid }}_openshift_usage_report.{{ collect_format }}'
+    dest: '{{ collect_download_path }}/{{ current_csv_uuid }}_openshift_usage_report.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
   register: download_result
 

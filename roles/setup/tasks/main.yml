@@ -189,7 +189,7 @@
         - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
         - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
   tags:
-    - setup_reports
+    - setup
 
 - name: Create new setup data configuration
   template:
