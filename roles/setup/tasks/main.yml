@@ -144,37 +144,60 @@
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
 
+- name: Check for hccm-openshift-persistentvolumeclaim Report
+  command: '{{ OCP_CLI }} get Report {{ setup_storage_report_name }}'
+  register: oc_get_storage_report
+  changed_when: false
+  ignore_errors: true
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+
+- name: Check for hccm-openshift-persistentvolumeclaim ReportGenerationQuery
+  command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_storage_report_name }}'
+  register: oc_get_storage_report_generation_query
+  changed_when: false
+  ignore_errors: true
+  when:
+    - setup_reports
+    - oc_project.stdout is defined and oc_project != ''
+
+- name: Define temp report file data location
+  set_fact:
+    ocp_temp_file_dir: '/tmp/{{ ocp_cluster_id }}'
+
+- name: Create temp report file data location
+  file:
+    path: '{{ ocp_temp_file_dir }}'
+    state: directory
+    mode: 0755
+
 - name: Copy hccm-usage-report files
   copy:
     src: '{{ item }}'
-    dest: '/tmp/'
+    dest: '{{ ocp_temp_file_dir }}'
   with_fileglob:
     - 'files/kube*'
     - 'files/pod*'
     - 'files/hccm*'
+    - 'files/persistentvolume*'
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
     - oc_get_report.rc is defined and  oc_get_report.rc != 0
+    - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
     - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
+    - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
 
 - name: Create Operator Metering definitions
-  command: '{{ OCP_CLI }} create -f {{ item }}'
-  with_items:
-    - '/tmp/kube-pod-labels_report_prometheus_query.yaml'
-    - '/tmp/kube-pod-labels_report_data_source.yaml'
-    - '/tmp/pod-labels_report_generation_query.yaml'
-    - '/tmp/pod-limit-cpu-cores_report_generation_query.yaml'
-    - '/tmp/pod-limit-memory-bytes_report_generation_query.yaml'
-    - '/tmp/hccm_openshift_usage_report_generation_query.yaml'
-    - '/tmp/hccm_openshift_usage_lookback_report_generation_query.yaml'
-    - '/tmp/hccm_openshift_usage_lookback_scheduled_report.yaml'
-    - '/tmp/hccm_openshift_usage_scheduled_report.yaml'
+  command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir }}'
   when:
     - setup_reports
     - oc_project.stdout is defined and oc_project != ''
     - oc_get_report.rc is defined and  oc_get_report.rc != 0
+    - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
     - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
+    - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
 
 - name: Create new setup data configuration
   template:

@@ -2,7 +2,7 @@
 # defaults file for collect
 collect_format: 'csv'
 collect_report_name: 'hccm-openshift-usage-lookback'
-collect_endpoint_params: '?name={{ collect_report_name }}&format={{ collect_format }}'
+collect_storage_report_name: 'hccm-openshift-persistentvolumeclaim-lookback'
 collect_archive_format: gz
 collect_archive_path: '/tmp'
 collect_archive_name: korekuta

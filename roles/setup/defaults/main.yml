@@ -3,6 +3,7 @@
 setup_insights_client_cmd: '/usr/bin/insights-client'
 OCP_CLI: '/usr/bin/oc'
 setup_reports: true
-setup_report_name: 'hccm-openshift-usage'
+setup_usage_report_name: 'hccm-openshift-usage'
+setup_storage_report_name: 'hccm-openshift-persistentvolumeclaim'
 setup_default_proxy_port: 8001
 setup_default_validate_cert: false
