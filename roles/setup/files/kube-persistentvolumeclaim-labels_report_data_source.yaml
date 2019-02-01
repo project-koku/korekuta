@@ -1,0 +1,8 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportDataSource
+metadata:
+ name: kube-persistentvolumeclaim-labels
+spec:
+ promsum:
+  query: "kube-persistentvolumeclaim-labels"

@@ -1,0 +1,8 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportDataSource
+metadata:
+ name: kube-pod-persistentvolumeclaim-info
+spec:
+ promsum:
+  query: "kube-pod-persistentvolumeclaim-info"

@@ -1,0 +1,14 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: Report
+metadata:
+  name: hccm-openshift-persistentvolumeclaim-lookback
+spec:
+  generationQuery: "hccm-openshift-persistentvolumeclaim-lookback"
+  inputs:
+    - name: "AggregatedReportName"
+      value: "hccm-openshift-persistentvolumeclaim"
+  gracePeriod: "10m"  # wait for sub-query to finish
+  schedule:
+    period: "hourly"
+  overwriteExistingData: true

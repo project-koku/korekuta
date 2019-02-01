@@ -1,0 +1,30 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportGenerationQuery
+metadata:
+  name: "persistentvolume-labels-raw"
+spec:
+  reportDataSources:
+    - "kube-persistentvolume-labels"
+  columns:
+    - name: persistentvolume
+      type: string
+      unit: kubernetes_persistentvolume
+    - name: namespace
+      type: string
+      unit: kubernetes_namespace
+    - name: labels
+      type: map<string, string>
+    - name: timestamp
+      type: timestamp
+      unit: date
+    - name: dt
+      type: string
+  query: |
+    SELECT labels['persistentvolume'] as persistentvolume,
+        labels['namespace'] as namespace,
+        labels,
+        "timestamp",
+        dt
+    FROM {| dataSourceTableName "kube-persistentvolume-labels" |}
+    WHERE element_at(labels, 'persistentvolume') IS NOT NULL

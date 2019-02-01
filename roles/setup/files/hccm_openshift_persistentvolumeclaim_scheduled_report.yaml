@@ -1,0 +1,9 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: Report
+metadata:
+  name: hccm-openshift-persistentvolumeclaim
+spec:
+  generationQuery: "hccm-openshift-persistentvolumeclaim"
+  schedule:
+    period: "hourly"
