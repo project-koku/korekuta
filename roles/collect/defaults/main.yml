@@ -12,6 +12,5 @@ collect_insights_client_cmd: '/usr/bin/insights-client'
 collect_download_path: '/tmp/korekuta-collect'
 collect_ocp_config_file: '{{ ansible_env.HOME }}/.config/ocp_usage/config.json'
 OCP_CLI: '/usr/bin/oc'
-collect_with_proxy: true
 collect_proxy_server_no_port: 'http://127.0.0.1'
 collect_content_type: 'application/vnd.redhat.hccm.tar+tgz'

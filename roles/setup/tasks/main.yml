@@ -119,85 +119,77 @@
   command: '{{ OCP_CLI }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
 
-- name: Switch to Operator Metering project
-  command: '{{ OCP_CLI }} project {{ OCP_METERING_NAMESPACE }}'
-  register: oc_project
-  changed_when: false
-  when:
-    - setup_reports
-
-- name: Check for hccm-usage-report Report
-  command: '{{ OCP_CLI }} get Report {{ setup_report_name }}'
-  register: oc_get_report
-  changed_when: false
-  ignore_errors: true
-  when:
-    - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-
-- name: Check for hccm-usage-report ReportGenerationQuery
-  command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_report_name }}'
-  register: oc_get_report_generation_query
-  changed_when: false
-  ignore_errors: true
-  when:
-    - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-
-- name: Check for hccm-openshift-persistentvolumeclaim Report
-  command: '{{ OCP_CLI }} get Report {{ setup_storage_report_name }}'
-  register: oc_get_storage_report
-  changed_when: false
-  ignore_errors: true
-  when:
-    - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-
-- name: Check for hccm-openshift-persistentvolumeclaim ReportGenerationQuery
-  command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_storage_report_name }}'
-  register: oc_get_storage_report_generation_query
-  changed_when: false
-  ignore_errors: true
-  when:
-    - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-
 - name: Define temp report file data location
-  set_fact:
-    ocp_temp_file_dir: '/tmp/{{ ocp_cluster_id }}'
-
-- name: Create temp report file data location
-  file:
-    path: '{{ ocp_temp_file_dir }}'
+  tempfile:
     state: directory
-    mode: 0755
+    suffix: 'korekuta-{{ ocp_cluster_id }}'
+  register: 'ocp_temp_file_dir'
 
-- name: Copy hccm-usage-report files
-  copy:
-    src: '{{ item }}'
-    dest: '{{ ocp_temp_file_dir }}'
-  with_fileglob:
-    - 'files/kube*'
-    - 'files/pod*'
-    - 'files/hccm*'
-    - 'files/persistentvolume*'
-  when:
-    - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-    - oc_get_report.rc is defined and  oc_get_report.rc != 0
-    - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
-    - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
-    - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
+# tag block
+- block:
+    - name: Switch to Operator Metering project
+      command: '{{ OCP_CLI }} project {{ OCP_METERING_NAMESPACE }}'
+      register: oc_project
+      changed_when: false
 
-- name: Create Operator Metering definitions
-  command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir }}'
-  when:
+    - name: Check for hccm-usage-report Report
+      command: '{{ OCP_CLI }} get Report {{ setup_report_name }}'
+      register: oc_get_report
+      changed_when: false
+      ignore_errors: true
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+
+    - name: Check for hccm-usage-report ReportGenerationQuery
+      command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_report_name }}'
+      register: oc_get_report_generation_query
+      changed_when: false
+      ignore_errors: true
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+
+    - name: Check for hccm-openshift-persistentvolumeclaim Report
+      command: '{{ OCP_CLI }} get Report {{ setup_storage_report_name }}'
+      register: oc_get_storage_report
+      changed_when: false
+      ignore_errors: true
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+
+    - name: Check for hccm-openshift-persistentvolumeclaim ReportGenerationQuery
+      command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_storage_report_name }}'
+      register: oc_get_storage_report_generation_query
+      changed_when: false
+      ignore_errors: true
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+
+    - name: Copy hccm-usage-report files
+      copy:
+        src: '{{ item }}'
+        dest: '{{ ocp_temp_file_dir }}'
+      with_fileglob:
+        - 'files/kube*'
+        - 'files/pod*'
+        - 'files/hccm*'
+        - 'files/persistentvolume*'
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+        - oc_get_report.rc is defined and  oc_get_report.rc != 0
+        - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
+        - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
+        - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
+
+    - name: Create Operator Metering definitions
+      command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir }}'
+      when:
+        - oc_project.stdout is defined and oc_project != ''
+        - oc_get_report.rc is defined and  oc_get_report.rc != 0
+        - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
+        - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
+        - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
+  tags:
     - setup_reports
-    - oc_project.stdout is defined and oc_project != ''
-    - oc_get_report.rc is defined and  oc_get_report.rc != 0
-    - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
-    - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
-    - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
 
 - name: Create new setup data configuration
   template:
