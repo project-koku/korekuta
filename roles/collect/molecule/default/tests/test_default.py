@@ -1,4 +1,5 @@
 """Tests for default molecule scenario."""
+import json
 import os
 
 import testinfra.utils.ansible_runner
@@ -34,12 +35,13 @@ def test_manifest_file(host):
     manifest_file = download_path + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
-    assert host.file(manifest_file).contains('"file":')
+    manifest = json.loads(host.file(manifest_file).content_string)
+    for keyname in ['files', 'date', 'uuid', 'cluster_id']:
+        assert keyname in manifest
     for file_name in test_files:
-        assert host.file(manifest_file).contains(file_name)
-    assert host.file(manifest_file).contains('"date":')
-    assert host.file(manifest_file).contains('"uuid":')
-    assert host.file(manifest_file).contains('"cluster_id": "test-cluster-id"')
+        assert file_name in manifest.get('files')
+    assert manifest.get('uuid') == csv_uuid
+    assert manifest.get('cluster_id') == 'test-cluster-id'
 
 
 def test_archive_file(host):
