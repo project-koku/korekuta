@@ -45,21 +45,37 @@
 - name: Set facts from OCP config
   set_fact:
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
-    collect_endpoint_params: '?name={{ collect_report_name }}&format={{ collect_format }}&namespace={{ ocp_metering_namespace }}'
-    collect_endpoint_path: 'api/v1/namespaces/{{ ocp_metering_namespace }}'
-    collect_endpoint_url: '{{ ocp_config["ocp_api"] }}'
+    api_host: '{{ ocp_config["ocp_api"] }}'
+    api_path: 'api/v1/namespaces/{{ ocp_metering_namespace }}'
     current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
+    format: "&format={{ collect_format }}"
+    namespace: "&namespace={{ ocp_metering_namespace }}"
 
-# conditional tag
+# conditional - with_proxy
 - name: Define facts from OCP config with proxy
   set_fact:
-    collect_endpoint_path: '{{ collect_endpoint_path }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
-    collect_endpoint_url: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}'
+    api_host: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}'
+    api_path: '{{ api_path }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
   tags: with_proxy
 
-- name: Define OCP API URL without proxy
+# getting a little clever to build lists to append into
+- name: initialize fact lists
   set_fact:
-    collect_endpoint_url: '{{ collect_endpoint_url }}/{{ collect_endpoint_path }}/{{ collect_endpoint_params }}'
+    api_params: []
+    api_urls: []
+    csv_files: []
+
+# this appends the string inside the brackets to the 'api_params' list.
+- name: compile URL query params, append to param list
+  set_fact:
+    api_params: "{{ api_params + ['?name='+item+format+namespace] }}"
+  with_items: "{{ collect_reports }}"
+
+# this appends the string inside the brackets to the 'api_urls' list.
+- name: assemble compiled URL facts, append to list.
+  set_fact:
+    api_urls: "{{ api_urls + [api_host+'/'+api_path+'/'+item] }}"
+  with_items: "{{ api_params }}"
 
 - name: Create temp dir for downloaded files
   file:
@@ -84,27 +100,37 @@
 
 - name: Download OCP report from endpoint
   get_url:
-    url: '{{ collect_endpoint_url }}'
-    dest: '{{ collect_download_path }}/{{ current_csv_uuid }}_openshift_usage_report.{{ collect_format }}'
+    url: '{{ item }}'
+    dest: '{{ collect_download_path }}/{{ current_csv_uuid }}_openshift_usage_report.{{ idx }}.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
+  with_items: "{{ api_urls }}"
+  loop_control:
+    index_var: idx
   register: download_result
 
-- name: set csv_filename fact
+- name: append filename to fact list
   set_fact:
-    collect_csv_filename: '{{ download_result.dest | basename }}'
+    csv_files: "{{ csv_files + [item.dest | basename] }}"
+  with_items: "{{ download_result.results }}"
+
+- name: debug
+  debug:
+    msg: "{{ csv_files }}"
 
 - name: Generate archive manifest
   template:
     src: 'templates/manifest.j2'
     dest: '{{ collect_download_path }}/manifest.json'
 
+- name: create list of files to include in tarball
+  set_fact:
+    tarball_files: "{{ csv_files + [collect_download_path+'/manifest.json'] }}"
+
 - name: Create tarball
   archive:
     format: '{{ collect_archive_format }}'
     dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path:
-      - '{{ collect_download_path }}/manifest.json'
-      - '{{ collect_download_path }}/{{collect_csv_filename}}'
+    path: "{{ tarball_files }}"
     remove: '{{ collect_delete_after }}'
   register: archive_result
 

@@ -19,20 +19,24 @@ def test_download_path(host):
 
 def test_csv_file(host):
     """Test csv file."""
-    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
-    csv_file = download_path + '/{}'.format(file_name)
-    assert host.file(csv_file).exists
-    assert host.file(csv_file).is_file
+    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
+    for file_name in test_files:
+        csv_file = download_path + '/{}'.format(file_name)
+        assert host.file(csv_file).exists
+        assert host.file(csv_file).is_file
 
 
 def test_manifest_file(host):
     """Test manifest file and contents."""
-    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
+    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
     manifest_file = download_path + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
-    assert host.file(manifest_file).contains(
-        '"file": "{}"'.format(file_name))
+    assert host.file(manifest_file).contains('"file":')
+    for file_name in test_files:
+        assert host.file(manifest_file).contains(file_name)
     assert host.file(manifest_file).contains('"date":')
     assert host.file(manifest_file).contains('"uuid":')
     assert host.file(manifest_file).contains('"cluster_id": "test-cluster-id"')
