@@ -122,15 +122,11 @@
     src: 'templates/manifest.j2'
     dest: '{{ collect_download_path }}/manifest.json'
 
-- name: create list of files to include in tarball
-  set_fact:
-    tarball_files: "{{ csv_files + [collect_download_path+'/manifest.json'] }}"
-
 - name: Create tarball
   archive:
     format: '{{ collect_archive_format }}'
     dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path: "{{ tarball_files }}"
+    path: "{{ collect_download_path }}"
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
