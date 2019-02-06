@@ -117,10 +117,6 @@
     csv_files: "{{ csv_files + [item.dest | basename] }}"
   with_items: "{{ download_result.results }}"
 
-- name: debug
-  debug:
-    msg: "{{ csv_files }}"
-
 - name: Generate archive manifest
   template:
     src: 'templates/manifest.j2'
