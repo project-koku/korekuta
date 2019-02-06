@@ -7,6 +7,8 @@
     files:
       - '{{ collect_insights_client_cmd }}'
       - '{{ collect_ocp_config_file }}'
+  tags:
+    - validate
 
 - name: Fetch OCP config file from remote host
   fetch:
@@ -90,6 +92,7 @@
 - name: Log in to OCP cluster
   command: '{{ OCP_CLI }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
+  no_log: true
 
 - name: Run OC Proxy
   command: 'nohup {{ OCP_CLI }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'

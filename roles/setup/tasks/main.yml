@@ -5,6 +5,8 @@
   vars:
     files:
       - '{{ setup_insights_client_cmd }}'
+  tags:
+    - validate
 
 - name: Ensure needed variables are set
   fail:
@@ -114,10 +116,12 @@
   command: 'cat {{ OCP_TOKEN_PATH }}'
   register: cat_token
   changed_when: false
+  no_log: true
 
 - name: Log in to OCP cluster
   command: '{{ OCP_CLI }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
   when: cat_token.stdout is defined and cat_token != ''
+  no_log: true
 
 - name: Define temp report file data location
   tempfile:
