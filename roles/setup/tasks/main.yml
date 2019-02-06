@@ -9,7 +9,7 @@
 - name: Ensure needed variables are set
   fail:
     msg: 'You must supply "-e {{ item }}=<{{ item }}>".'
-  when: '{{ item }} is not defined'
+  when: 'item is not defined'
   with_items:
     - OCP_API
     - OCP_TOKEN_PATH
@@ -190,6 +190,7 @@
         - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
   tags:
     - setup
+    - notest
 
 - name: Create new setup data configuration
   template:
