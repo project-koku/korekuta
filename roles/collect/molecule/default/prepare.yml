@@ -3,7 +3,6 @@
   hosts: all
   gather_facts: true
   vars:
-    namespace: metering
     test_paths:
       - '/api/v1/namespaces/metering/test/services/https:reporting-operator:http/proxy/api/v1/reports/get'
   tasks:
