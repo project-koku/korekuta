@@ -1,12 +1,12 @@
 ---
 apiVersion: metering.openshift.io/v1alpha1
-kind: ScheduledReport
+kind: Report
 metadata:
   name: hccm-openshift-usage-lookback
 spec:
   generationQuery: "hccm-openshift-usage-lookback"
   inputs:
-    - name: "ReportName"
+    - name: "AggregatedReportName"
       value: "hccm-openshift-usage"
   gracePeriod: "10m"  # wait for sub-query to finish
   schedule:

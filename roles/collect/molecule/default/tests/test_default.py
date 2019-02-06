@@ -1,4 +1,5 @@
 """Tests for default molecule scenario."""
+import json
 import os
 
 import testinfra.utils.ansible_runner
@@ -19,23 +20,28 @@ def test_download_path(host):
 
 def test_csv_file(host):
     """Test csv file."""
-    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
-    csv_file = download_path + '/{}'.format(file_name)
-    assert host.file(csv_file).exists
-    assert host.file(csv_file).is_file
+    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
+    for file_name in test_files:
+        csv_file = download_path + '/{}'.format(file_name)
+        assert host.file(csv_file).exists
+        assert host.file(csv_file).is_file
 
 
 def test_manifest_file(host):
     """Test manifest file and contents."""
-    file_name = '{}_openshift_usage_report.csv'.format(csv_uuid)
+    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
     manifest_file = download_path + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
-    assert host.file(manifest_file).contains(
-        '"file": "{}"'.format(file_name))
-    assert host.file(manifest_file).contains('"date":')
-    assert host.file(manifest_file).contains('"uuid":')
-    assert host.file(manifest_file).contains('"cluster_id": "test-cluster-id"')
+    manifest = json.loads(host.file(manifest_file).content_string)
+    for keyname in ['files', 'date', 'uuid', 'cluster_id']:
+        assert keyname in manifest
+    for file_name in test_files:
+        assert file_name in manifest.get('files')
+    assert manifest.get('uuid') == csv_uuid
+    assert manifest.get('cluster_id') == 'test-cluster-id'
 
 
 def test_archive_file(host):
