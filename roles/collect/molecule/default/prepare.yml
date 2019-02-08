@@ -2,6 +2,9 @@
 - name: Prepare
   hosts: all
   gather_facts: true
+  vars:
+    test_paths:
+      - '/api/v1/namespaces/metering/test/services/https:reporting-operator:http/proxy/api/v1/reports/get'
   tasks:
     - name: install openshift client
       include_role:
@@ -26,13 +29,15 @@
 
     - name: create test webserver dir
       file:
-        path: '/tmp/www/api/v1/namespaces/metering'
+        path: "{{ item }}"
         state: directory
+      with_items: "{{ test_paths }}"
 
     - name: create test file
       copy:
-        dest: '/tmp/www/api/v1/namespaces/metering/test'
+        dest: "{{ item }}/test"
         content: 'this,is,test,data'
+      with_items: "{{ test_paths }}"
 
     - name: launch test web server
       shell: cd /tmp/www; nohup python -m SimpleHTTPServer 8001 </dev/null >/dev/null 2>&1 &

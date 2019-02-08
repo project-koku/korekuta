@@ -1,8 +1,9 @@
 ---
 # defaults file for collect
 collect_format: 'csv'
-collect_report_name: 'hccm-openshift-usage-lookback'
-collect_endpoint_params: '?name={{ collect_report_name }}&format={{ collect_format }}'
+collect_reports:
+  - 'hccm-openshift-usage-lookback'
+  - 'hccm-openshift-persistentvolumeclaim-lookback'
 collect_archive_format: gz
 collect_archive_path: '/tmp'
 collect_archive_name: korekuta
@@ -12,6 +13,5 @@ collect_insights_client_cmd: '/usr/bin/insights-client'
 collect_download_path: '/tmp/korekuta-collect'
 collect_ocp_config_file: '{{ ansible_env.HOME }}/.config/ocp_usage/config.json'
 OCP_CLI: '/usr/bin/oc'
-collect_with_proxy: true
 collect_proxy_server_no_port: 'http://127.0.0.1'
 collect_content_type: 'application/vnd.redhat.hccm.tar+tgz'
