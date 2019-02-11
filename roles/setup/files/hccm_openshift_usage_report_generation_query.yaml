@@ -181,7 +181,7 @@ spec:
     )
     SELECT
       date_trunc('month', timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart| prestoTimestamp |}') AS report_period_start,
-      date_trunc('month', timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}')  + interval '1' month - interval '1' second AS report_period_end,
+      date_trunc('month', timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}')  + interval '1' month AS report_period_end,
       PCUR.pod,
       PCUR.namespace,
       PCUR.node,
