@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d30558acf247d894ee426ae1c053a8d0ec62edc7fa33b197d0548efc1ccee1f8"
+            "sha256": "e2bd595bc1fe7b8d0b0aa30a58ee1547a4b3a43e8b50b65901c8251365c76ce9"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -23,10 +23,10 @@
         },
         "ansible": {
             "hashes": [
-                "sha256:6d855ead966c1a24a7d583ddcea8dd9e1f6edab3207390b647149351e113eb38"
+                "sha256:040cc936f959b947800ffaa5f940d2508aaa41f899efe56b47a7442c89689150"
             ],
             "index": "pypi",
-            "version": "==2.7.6"
+            "version": "==2.7.7"
         },
         "asn1crypto": {
             "hashes": [
@@ -406,10 +406,10 @@
     "develop": {
         "ansible": {
             "hashes": [
-                "sha256:6d855ead966c1a24a7d583ddcea8dd9e1f6edab3207390b647149351e113eb38"
+                "sha256:040cc936f959b947800ffaa5f940d2508aaa41f899efe56b47a7442c89689150"
             ],
             "index": "pypi",
-            "version": "==2.7.6"
+            "version": "==2.7.7"
         },
         "ansible-lint": {
             "hashes": [
@@ -753,11 +753,10 @@
         },
         "more-itertools": {
             "hashes": [
-                "sha256:38a936c0a6d98a38bcc2d03fdaaedaba9f412879461dd2ceff8d37564d6522e4",
-                "sha256:c0a5785b1109a6bd7fac76d6837fd1feca158e54e521ccd2ae8bfe393cc9d4fc",
-                "sha256:fe7a7cae1ccb57d33952113ff4fa1bc5f879963600ed74918f1236e212ee50b9"
+                "sha256:0125e8f60e9e031347105eb1682cef932f5e97d7b9a1a28d9bf00c22a5daef40",
+                "sha256:590044e3942351a1bdb1de960b739ff4ce277960f2425ad4509446dbace8d9d1"
             ],
-            "version": "==5.0.0"
+            "version": "==6.0.0"
         },
         "paramiko": {
             "hashes": [
@@ -1018,10 +1017,10 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:58c359370401e0af817fb0070911e599c5fdc836166306b04fd0f278151ed125",
-                "sha256:729f0bcab430e4ef137646805b5b1d8efbb43fe53d4a0f33328624a84a5121f7"
+                "sha256:8b9abfc51c38b70f61634bf265e5beacf6fae11fc25d355d1871f49b8e45f0db",
+                "sha256:cceab52aa7d4df1e1871a70236eb2b89fcfe29b6b43510d9738689787c513261"
             ],
-            "version": "==16.3.0"
+            "version": "==16.4.0"
         },
         "whichcraft": {
             "hashes": [
