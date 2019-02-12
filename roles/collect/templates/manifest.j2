@@ -1,5 +1,5 @@
 {
-    "files": {{ csv_files|tojson }},
+    "files": {{ csv_files_json }},
     "date": "{{ ansible_date_time.iso8601 }}",
     "uuid": "{{ current_csv_uuid }}",
     "cluster_id": "{{ ocp_config['ocp_cluster_id'] }}"

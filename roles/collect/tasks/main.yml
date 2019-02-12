@@ -117,6 +117,10 @@
     csv_files: "{{ csv_files + [item.dest | basename] }}"
   with_items: "{{ download_result.results }}"
 
+- name: CSV filename to json
+  set_fact:
+    csv_files_json: "{{ csv_files | to_json }}"
+
 - name: Generate archive manifest
   template:
     src: 'templates/manifest.j2'
@@ -130,11 +134,17 @@
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
+- name: Set Insights Client GPG Flag
+  set_fact:
+    collect_insights_bypass_gpg_flag: '--no-gpg'
+  when:
+    - collect_insights_bypass_gpg == 'True'
+
 - name: Send payload to the Insights Client
-  command: '{{ collect_insights_client_cmd }} --no-gpg --payload={{ collect_archive_path }}/{{ collect_archive_filename }} --content-type={{ collect_content_type }}'
+  command: '{{ collect_insights_client_cmd }} {{ collect_insights_bypass_gpg_flag }} --payload={{ collect_archive_path }}/{{ collect_archive_filename }} --content-type={{ collect_content_type }}'
   environment:
-    BYPASS_GPG: 'True'
-    EGG: '/etc/insights-client/rpm.egg'
+    BYPASS_GPG: '{{ collect_insights_bypass_gpg }}'
+    EGG: '{{ collect_insights_egg_path }}'
   become: true
   when: archive_result.state == 'file'
 
