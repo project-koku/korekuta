@@ -9,7 +9,7 @@ name = "pypi"
 
 docker-py = "==1.10.6"
 ansible = "==2.7.7"
-openshift = "==0.8.4"
+openshift = "==0.8.6"
 shellingham = "==1.2.8"
 
 
