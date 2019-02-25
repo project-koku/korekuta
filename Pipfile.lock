@@ -138,10 +138,10 @@
         },
         "dictdiffer": {
             "hashes": [
-                "sha256:6de9370f3c0c7fb5cc8bdc9e10dbca6ff05c39d8e2e58a67eb98d32677a224ca",
-                "sha256:e4f94167d037f70c11c6a8e7e289d81c8c7117bc02132cd82a0ab8fcba43cc08"
+                "sha256:b6eed4cf74ed31ae9646257a9f802bb09e545ca817d5c0119d747b6a05b6a22d",
+                "sha256:cc398dc26600cdb9519b2c768157333a0967b24d64c3913077dd0794274395da"
             ],
-            "version": "==0.7.1"
+            "version": "==0.7.2"
         },
         "docker-py": {
             "hashes": [
