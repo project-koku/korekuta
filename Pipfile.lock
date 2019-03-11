@@ -371,11 +371,10 @@
         },
         "shellingham": {
             "hashes": [
-                "sha256:56e6c7f043661a82b276c241c8e62da62cdf710437164cdef75b3f3ac50fb384",
-                "sha256:f24a5a01e6c81d04e252fa2ebaa37710af27e7ec9b54692bcddb9303f899101b"
+                "sha256:2a8163f495695a9e086da96d0621ceb7137bd70d5c790ba600406a43b53484a8",
+                "sha256:a1bc8cbe437e5348c242d4e8145242d364d9493034ed790a82991c0e2d3ad984"
             ],
-            "index": "pypi",
-            "version": "==1.2.8"
+            "version": "==1.3.0"
         },
         "six": {
             "hashes": [
