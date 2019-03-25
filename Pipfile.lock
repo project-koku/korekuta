@@ -944,10 +944,10 @@
         },
         "testinfra": {
             "hashes": [
-                "sha256:499ba7201d1a0f418fa0318bf2ae28142893c4f9d49ab24af21441fdb529292f",
-                "sha256:da1d0d1ffd68935b950b7b83833d863436ea75398a5cbdc0d0ab9e61132e2088"
+                "sha256:08a5d69136f253cdc0f23e3ba016d21ec8b0e2b2ad18179e0af504f4889f792b",
+                "sha256:ef96430e33a241e1fa08cb157530aa41e79384bb462024f31603c9032f5a8e0e"
             ],
-            "version": "==1.16.0"
+            "version": "==2.0.0"
         },
         "toml": {
             "hashes": [
