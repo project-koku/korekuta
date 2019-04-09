@@ -153,3 +153,15 @@
     path: '{{ collect_download_path }}'
     state: absent
   when: collect_delete_after
+
+- name: Remove temp config
+  file:
+    path: '/tmp/{{ collect_ocp_config_file | basename }}'
+    state: absent
+  when: collect_delete_after
+
+- name: Remove tarball
+  file:
+    path: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
+    state: absent
+  when: collect_delete_after
