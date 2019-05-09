@@ -4,5 +4,6 @@ kind: ReportDataSource
 metadata:
  name: kube-pod-labels
 spec:
- promsum:
-  query: "kube-pod-labels"
+ prometheusMetricsImporter:
+  query: |
+   kube_pod_labels

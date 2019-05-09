@@ -4,5 +4,6 @@ kind: ReportDataSource
 metadata:
  name: kube-pod-persistentvolumeclaim-info
 spec:
- promsum:
-  query: "kube-pod-persistentvolumeclaim-info"
+ prometheusMetricsImporter:
+  query: |
+   kube_pod_spec_volumes_persistentvolumeclaims_info

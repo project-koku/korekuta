@@ -1,8 +1,0 @@
----
-apiVersion: metering.openshift.io/v1alpha1
-kind: ReportPrometheusQuery
-metadata:
- name: kube-persistentvolume-labels
-spec:
- query: |
-   kube_persistentvolume_labels

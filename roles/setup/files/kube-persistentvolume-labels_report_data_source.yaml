@@ -4,5 +4,6 @@ kind: ReportDataSource
 metadata:
  name: kube-persistentvolume-labels
 spec:
- promsum:
-  query: "kube-persistentvolume-labels"
+ prometheusMetricsImporter:
+  query: |
+   kube_persistentvolume_labels
