@@ -1,6 +1,6 @@
 ---
 apiVersion: metering.openshift.io/v1alpha1
-kind: ReportGenerationQuery
+kind: ReportQuery
 metadata:
   name: hccm-openshift-usage
 spec:
