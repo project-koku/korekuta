@@ -9,5 +9,3 @@ spec:
   prometheusMetricsImporter:
     query: |
       kube_pod_labels
-  reportQueryView:
-    queryName: kube-pod-labels

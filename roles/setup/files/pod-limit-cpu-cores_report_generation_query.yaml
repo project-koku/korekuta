@@ -5,8 +5,6 @@ metadata:
     cost-management: "true"
   name: pod-cpu-limit-raw
 spec:
-  reportQueryView:
-    queryName: pod-cpu-limit-raw
   columns:
     - name: pod
       type: string

@@ -5,8 +5,6 @@ metadata:
     cost-management: "true"
   name: persistentvolumeclaim-labels-raw
 spec:
-  reportQueryView:
-    queryName: persistentvolumeclaim-labels-raw
   columns:
     - name: persistentvolumeclaim
       type: string

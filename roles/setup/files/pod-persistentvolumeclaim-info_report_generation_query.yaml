@@ -5,8 +5,6 @@ metadata:
     cost-management: "true"
   name: pod-persistentvolumeclaim-info-raw
 spec:
-  reportQueryView:
-    queryName: pod-persistentvolumeclaim-info-raw
   columns:
     - name: pod
       type: string
