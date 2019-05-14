@@ -1,0 +1,10 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportDataSource
+metadata:
+  labels:
+    cost-management: "true"
+  name: pod-cpu-limit-raw
+spec:
+  reportQueryView:
+    queryName: pod-cpu-limit-raw
