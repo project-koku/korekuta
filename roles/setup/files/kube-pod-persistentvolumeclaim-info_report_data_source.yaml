@@ -9,3 +9,5 @@ spec:
   prometheusMetricsImporter:
     query: |
       kube_pod_spec_volumes_persistentvolumeclaims_info
+  reportQueryView:
+    queryName: kube-pod-persistentvolumeclaim-info

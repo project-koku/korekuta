@@ -9,3 +9,5 @@ spec:
   prometheusMetricsImporter:
     query: |
       kube_persistentvolume_labels
+  reportQueryView:
+    queryName: kube-persistentvolume-labels
