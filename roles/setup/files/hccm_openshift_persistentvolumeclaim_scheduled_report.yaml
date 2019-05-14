@@ -6,6 +6,6 @@ metadata:
     cost-management: "true"
   name: hccm-openshift-persistentvolumeclaim
 spec:
-  generationQuery: hccm-openshift-persistentvolumeclaim
+  query: hccm-openshift-persistentvolumeclaim
   schedule:
     period: hourly
