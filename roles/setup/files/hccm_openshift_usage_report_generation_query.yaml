@@ -62,7 +62,36 @@ spec:
       type: string
   inputs:
     - name: ReportingStart
+      type: time
     - name: ReportingEnd
+      type: time
+    - default: pod-cpu-usage-raw
+      name: KubeCPUUsageRawDataSourceName
+      type: ReportDataSource
+    - default: pod-cpu-request-raw
+      name: KubeCPURequestRawDataSourceName
+      type: ReportDataSource
+    - default: pod-cpu-limit-raw
+      name: KubeCPULimitRawDataSourceName
+      type: ReportDataSource
+    - default: pod-memory-usage-raw
+      name: KubeMemoryUsageRawDataSourceName
+      type: ReportDataSource
+    - default: pod-memory-request-raw
+      name: KubeMemoryRequestRawDataSourceName
+      type: ReportDataSource
+    - default: pod-memory-limit-raw
+      name: KubeMemoryLimitRawDataSourceName
+      type: ReportDataSource
+    - default: node-cpu-capacity-raw
+      name: NodeCPUCapacityRawDataSourceName
+      type: ReportDataSource
+    - default: node-memory-capacity-raw
+      name: NodeMemoryCapacityRawDataSourceName
+      type: ReportDataSource
+    - default: pod-labels-raw
+      name: PodLabelsRawDataSourceName
+      type: ReportDataSource
   query: |
     WITH cte_hourly_pod_cpu_usage AS (
       SELECT namespace,
@@ -70,7 +99,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_usage_cpu_core_seconds) as pod_usage_cpu_core_seconds
-      FROM {| generationQueryViewName "pod-cpu-usage-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeCPUUsageRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -83,7 +112,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_request_cpu_core_seconds) as pod_request_cpu_core_seconds
-      FROM {| generationQueryViewName "pod-cpu-request-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeCPURequestRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -96,7 +125,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_limit_cpu_core_seconds) as pod_limit_cpu_core_seconds
-      FROM {| generationQueryViewName "pod-cpu-limit-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeCPULimitRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -109,7 +138,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_usage_memory_byte_seconds) as pod_usage_memory_byte_seconds
-      FROM {| generationQueryViewName "pod-memory-usage-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeMemoryUsageRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -122,7 +151,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_request_memory_byte_seconds) as pod_request_memory_byte_seconds
-      FROM {| generationQueryViewName "pod-memory-request-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeMemoryRequestRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -135,7 +164,7 @@ spec:
         node,
         date_trunc('hour', "timestamp") as interval_start,
         sum(pod_limit_memory_byte_seconds) as pod_limit_memory_byte_seconds
-      FROM {| generationQueryViewName "pod-memory-limit-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.KubeMemoryLimitRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -148,7 +177,7 @@ spec:
         date_trunc('hour', "timestamp") as interval_start,
         max(node_capacity_cpu_cores) as node_capacity_cpu_cores,
         sum(node_capacity_cpu_core_seconds) as node_capacity_cpu_core_seconds
-      FROM {| generationQueryViewName "node-cpu-capacity-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.NodeCPUCapacityRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -160,7 +189,7 @@ spec:
         date_trunc('hour', "timestamp") as interval_start,
         max(node_capacity_memory_bytes) as node_capacity_memory_bytes,
         sum(node_capacity_memory_byte_seconds) as node_capacity_memory_byte_seconds
-      FROM {| generationQueryViewName "node-memory-capacity-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.NodeMemoryCapacityRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -172,7 +201,7 @@ spec:
         pod,
         date_trunc('hour', "timestamp") as interval_start,
         array_join(map_values(transform_values(map_filter(map_union(labels), (k, v) -> k LIKE 'label_%'), (k, v) -> concat(k, ':', v))), '|') as pod_labels
-      FROM {| generationQueryViewName "pod-labels-raw" |}
+      FROM {| dataSourceTableName .Report.Inputs.PodLabelsRawDataSourceName |}
       WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
         AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
         AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
@@ -235,15 +264,3 @@ spec:
         ON PCUR.namespace = PL.namespace
           AND PCUR.pod = PL.pod
           AND PCUR.interval_start = PL.interval_start
-  reportQueries:
-    - pod-cpu-usage-raw
-    - pod-cpu-request-raw
-    - pod-cpu-limit-raw
-    - pod-memory-usage-raw
-    - pod-memory-request-raw
-    - pod-memory-limit-raw
-    - node-cpu-capacity-raw
-    - node-memory-capacity-raw
-    - pod-labels-raw
-  view:
-    disabled: true

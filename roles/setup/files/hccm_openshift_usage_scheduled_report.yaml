@@ -4,6 +4,6 @@ kind: Report
 metadata:
   name: hccm-openshift-usage
 spec:
-  generationQuery: "hccm-openshift-usage"
+  query: hccm-openshift-usage
   schedule:
-    period: "hourly"
+    period: hourly
