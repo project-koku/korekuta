@@ -1,11 +1,10 @@
----
 apiVersion: metering.openshift.io/v1alpha1
 kind: ReportQuery
 metadata:
-  name: "pod-labels-raw"
+  name: pod-labels-raw
 spec:
-  reportDataSources:
-    - "kube-pod-labels"
+  reportQueryView:
+    queryName: pod-labels-raw
   columns:
     - name: pod
       type: string
@@ -20,11 +19,15 @@ spec:
       unit: date
     - name: dt
       type: string
+  inputs:
+    - default: kube-pod-labels
+      name: KubePodLabelsDataSourceName
+      type: ReportDataSource
   query: |
     SELECT labels['pod'] as pod,
         labels['namespace'] as namespace,
         labels,
         "timestamp",
         dt
-    FROM {| dataSourceTableName "kube-pod-labels" |}
+    FROM {| dataSourceTableName .Report.Inputs.KubePodLabelsDataSourceName |}
     WHERE element_at(labels, 'pod') IS NOT NULL

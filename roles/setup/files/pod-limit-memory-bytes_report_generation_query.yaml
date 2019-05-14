@@ -1,13 +1,12 @@
----
 apiVersion: metering.openshift.io/v1alpha1
 kind: ReportQuery
 metadata:
-  name: "pod-memory-limit-raw"
   labels:
     operator-metering: "true"
+  name: pod-memory-limit-raw
 spec:
-  reportDataSources:
-    - "pod-limit-memory-bytes"
+  reportQueryView:
+    queryName: pod-memory-limit-raw
   columns:
     - name: pod
       type: string
@@ -19,8 +18,8 @@ spec:
       type: string
       unit: kubernetes_node
     - name: labels
-      type: map<string, string>
       tableHidden: true
+      type: map<string, string>
     - name: pod_limit_memory_bytes
       type: double
       unit: bytes
@@ -35,15 +34,19 @@ spec:
       unit: date
     - name: dt
       type: string
+  inputs:
+    - default: pod-limit-memory-bytes
+      name: PodLimitMemoryBytesDataSourceName
+      type: ReportDataSource
   query: |
-      SELECT labels['pod'] as pod,
-          labels['namespace'] as namespace,
-          element_at(labels, 'node') as node,
-          labels,
-          amount as pod_limit_memory_bytes,
-          timeprecision,
-          amount * timeprecision as pod_limit_memory_byte_seconds,
-          "timestamp",
-          dt
-      FROM {| dataSourceTableName "pod-limit-memory-bytes" |}
-      WHERE element_at(labels, 'node') IS NOT NULL
+    SELECT labels['pod'] as pod,
+        labels['namespace'] as namespace,
+        element_at(labels, 'node') as node,
+        labels,
+        amount as pod_limit_memory_bytes,
+        timeprecision,
+        amount * timeprecision as pod_limit_memory_byte_seconds,
+        "timestamp",
+        dt
+    FROM {| dataSourceTableName .Report.Inputs.PodLimitMemoryBytesDataSourceName |}
+    WHERE element_at(labels, 'node') IS NOT NULL
