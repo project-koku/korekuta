@@ -2,7 +2,7 @@ apiVersion: metering.openshift.io/v1alpha1
 kind: ReportQuery
 metadata:
   labels:
-    operator-metering: "true"
+    cost-management: "true"
   name: pod-memory-limit-raw
 spec:
   reportQueryView:
