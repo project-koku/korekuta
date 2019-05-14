@@ -4,11 +4,11 @@ kind: Report
 metadata:
   name: hccm-openshift-persistentvolumeclaim-lookback
 spec:
-  generationQuery: "hccm-openshift-persistentvolumeclaim-lookback"
+  query: hccm-openshift-persistentvolumeclaim-lookback
   inputs:
-    - name: "AggregatedReportName"
-      value: "hccm-openshift-persistentvolumeclaim"
-  gracePeriod: "10m"  # wait for sub-query to finish
+    - name: PersistentVolumeClaimUsageReportName
+      value: hccm-openshift-persistentvolumeclaim
+  gracePeriod: 10m  # wait for sub-query to finish
   schedule:
-    period: "hourly"
+    period: hourly
   overwriteExistingData: true

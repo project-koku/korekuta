@@ -52,8 +52,10 @@ spec:
       type: string
   inputs:
     - name: ReportingStart
-    - name: AggregatedReportName
-      required: true
+      type: time
+    - default: hccm-openshift-persistentvolumeclaim
+      name: PersistentVolumeClaimUsageReportName
+      type: Report
   query: |
     SELECT report_period_start,
       report_period_end,
@@ -70,5 +72,5 @@ spec:
       persistentvolumeclaim_usage_byte_seconds,
       persistentvolume_labels,
       persistentvolumeclaim_labels
-    FROM {| .Report.Inputs.AggregatedReportName | reportTableName |}
-    WHERE {| .Report.Inputs.AggregatedReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
+    FROM {| .Report.Inputs.PersistentVolumeClaimUsageReportName | reportTableName |}
+    WHERE {| .Report.Inputs.PersistentVolumeClaimUsageReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day

@@ -4,6 +4,6 @@ kind: Report
 metadata:
   name: hccm-openshift-persistentvolumeclaim
 spec:
-  generationQuery: "hccm-openshift-persistentvolumeclaim"
+  generationQuery: hccm-openshift-persistentvolumeclaim
   schedule:
-    period: "hourly"
+    period: hourly
