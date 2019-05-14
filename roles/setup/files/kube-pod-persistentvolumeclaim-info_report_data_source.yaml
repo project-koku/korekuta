@@ -4,8 +4,8 @@ kind: ReportDataSource
 metadata:
   labels:
     cost-management: "true"
- name: kube-pod-persistentvolumeclaim-info
+  name: kube-pod-persistentvolumeclaim-info
 spec:
- prometheusMetricsImporter:
-  query: |
-   kube_pod_spec_volumes_persistentvolumeclaims_info
+  prometheusMetricsImporter:
+    query: |
+      kube_pod_spec_volumes_persistentvolumeclaims_info

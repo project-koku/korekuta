@@ -4,8 +4,8 @@ kind: ReportDataSource
 metadata:
   labels:
     cost-management: "true"
- name: kube-persistentvolume-labels
+  name: kube-persistentvolume-labels
 spec:
- prometheusMetricsImporter:
-  query: |
-   kube_persistentvolume_labels
+  prometheusMetricsImporter:
+    query: |
+      kube_persistentvolume_labels
