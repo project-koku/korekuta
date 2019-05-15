@@ -1,7 +1,9 @@
 ---
 apiVersion: metering.openshift.io/v1alpha1
-kind: ReportGenerationQuery
+kind: ReportQuery
 metadata:
+  labels:
+    cost-management: "true"
   name: hccm-openshift-usage-lookback
 spec:
   view:
@@ -14,13 +16,13 @@ spec:
       type: timestamp
       unit: date
     - name: pod
-      type: string
+      type: varchar
       unit: kubernetes_pod
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: node
-      type: string
+      type: varchar
       unit: kubernetes_node
     - name: interval_start
       type: timestamp
@@ -59,13 +61,15 @@ spec:
       type: double
       unit: byte_seconds
     - name: resource_id
-      type: string
+      type: varchar
     - name: pod_labels
-      type: string
+      type: varchar
   inputs:
     - name: ReportingStart
-    - name: AggregatedReportName
-      required: true
+      type: time
+    - default: hccm-openshift-usage
+      name: CostManagementOpenShiftUsageReportName
+      type: Report
   query: |
     SELECT report_period_start,
       report_period_end,
@@ -86,5 +90,5 @@ spec:
       node_capacity_memory_byte_seconds,
       resource_id,
       pod_labels
-    FROM {| .Report.Inputs.AggregatedReportName | reportTableName |}
-    WHERE {| .Report.Inputs.AggregatedReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
+    FROM {| .Report.Inputs.CostManagementOpenShiftUsageReportName | reportTableName |}
+    WHERE {| .Report.Inputs.CostManagementOpenShiftUsageReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day

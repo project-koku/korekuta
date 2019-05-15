@@ -1,13 +1,11 @@
 ---
 apiVersion: metering.openshift.io/v1alpha1
-kind: ReportGenerationQuery
+kind: ReportQuery
 metadata:
-  name: "pod-cpu-limit-raw"
   labels:
-    operator-metering: "true"
+    cost-management: "true"
+  name: pod-cpu-limit-raw
 spec:
-  reportDataSources:
-    - "pod-limit-cpu-cores"
   columns:
     - name: pod
       type: string
@@ -19,8 +17,8 @@ spec:
       type: string
       unit: kubernetes_node
     - name: labels
-      type: map<string, string>
       tableHidden: true
+      type: map<string, string>
     - name: pod_limit_cpu_cores
       type: double
       unit: cpu_cores
@@ -35,15 +33,19 @@ spec:
       unit: date
     - name: dt
       type: string
+  inputs:
+    - default: pod-limit-cpu-cores
+      name: PodLimitCpuCoresDataSourceName
+      type: ReportDataSource
   query: |
-      SELECT labels['pod'] as pod,
-          labels['namespace'] as namespace,
-          element_at(labels, 'node') as node,
-          labels,
-          amount as pod_limit_cpu_cores,
-          timeprecision,
-          amount * timeprecision as pod_limit_cpu_core_seconds,
-          "timestamp",
-          dt
-      FROM {| dataSourceTableName "pod-limit-cpu-cores" |}
-      WHERE element_at(labels, 'node') IS NOT NULL
+    SELECT labels['pod'] as pod,
+        labels['namespace'] as namespace,
+        element_at(labels, 'node') as node,
+        labels,
+        amount as pod_limit_cpu_cores,
+        timeprecision,
+        amount * timeprecision as pod_limit_cpu_core_seconds,
+        "timestamp",
+        dt
+    FROM {| dataSourceTableName .Report.Inputs.PodLimitCpuCoresDataSourceName |}
+    WHERE element_at(labels, 'node') IS NOT NULL

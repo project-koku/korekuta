@@ -2,7 +2,10 @@
 apiVersion: metering.openshift.io/v1alpha1
 kind: ReportDataSource
 metadata:
- name: kube-pod-labels
+  labels:
+    cost-management: "true"
+  name: kube-pod-labels
 spec:
- promsum:
-  query: "kube-pod-labels"
+  prometheusMetricsImporter:
+    query: |
+      kube_pod_labels

@@ -2,13 +2,15 @@
 apiVersion: metering.openshift.io/v1alpha1
 kind: Report
 metadata:
+  labels:
+    cost-management: "true"
   name: hccm-openshift-usage-lookback
 spec:
-  generationQuery: "hccm-openshift-usage-lookback"
+  query: hccm-openshift-usage-lookback
   inputs:
-    - name: "AggregatedReportName"
-      value: "hccm-openshift-usage"
-  gracePeriod: "10m"  # wait for sub-query to finish
+    - name: CostManagementOpenShiftUsageReportName
+      value: hccm-openshift-usage
+  gracePeriod: 10m  # wait for sub-query to finish
   schedule:
-    period: "hourly"
+    period: hourly
   overwriteExistingData: true
