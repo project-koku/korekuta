@@ -1,7 +1,9 @@
 ---
 apiVersion: metering.openshift.io/v1alpha1
-kind: ReportGenerationQuery
+kind: ReportQuery
 metadata:
+  labels:
+    cost-management: "true"
   name: hccm-openshift-persistentvolumeclaim-lookback
 spec:
   view:
@@ -20,19 +22,19 @@ spec:
       type: timestamp
       unit: date
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: pod
-      type: string
+      type: varchar
       unit: kubernetes_pod
     - name: persistentvolumeclaim
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolumeclaim
     - name: persistentvolume
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolume
     - name: storageclass
-      type: string
+      type: varchar
       unit: kubernetes_storageclass
     - name: persistentvolumeclaim_capacity_bytes
       type: double
@@ -47,13 +49,15 @@ spec:
       type: double
       unit: byte_seconds
     - name: persistentvolume_labels
-      type: string
+      type: varchar
     - name: persistentvolumeclaim_labels
-      type: string
+      type: varchar
   inputs:
     - name: ReportingStart
-    - name: AggregatedReportName
-      required: true
+      type: time
+    - default: hccm-openshift-persistentvolumeclaim
+      name: PersistentVolumeClaimUsageReportName
+      type: Report
   query: |
     SELECT report_period_start,
       report_period_end,
@@ -70,5 +74,5 @@ spec:
       persistentvolumeclaim_usage_byte_seconds,
       persistentvolume_labels,
       persistentvolumeclaim_labels
-    FROM {| .Report.Inputs.AggregatedReportName | reportTableName |}
-    WHERE {| .Report.Inputs.AggregatedReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day
+    FROM {| .Report.Inputs.PersistentVolumeClaimUsageReportName | reportTableName |}
+    WHERE {| .Report.Inputs.PersistentVolumeClaimUsageReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day

@@ -1,8 +1,0 @@
----
-apiVersion: metering.openshift.io/v1alpha1
-kind: ReportPrometheusQuery
-metadata:
- name: kube-pod-persistentvolumeclaim-info
-spec:
- query: |
-   kube_pod_spec_volumes_persistentvolumeclaims_info

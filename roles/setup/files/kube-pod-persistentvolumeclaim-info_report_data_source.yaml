@@ -2,7 +2,10 @@
 apiVersion: metering.openshift.io/v1alpha1
 kind: ReportDataSource
 metadata:
- name: kube-pod-persistentvolumeclaim-info
+  labels:
+    cost-management: "true"
+  name: kube-pod-persistentvolumeclaim-info
 spec:
- promsum:
-  query: "kube-pod-persistentvolumeclaim-info"
+  prometheusMetricsImporter:
+    query: |
+      kube_pod_spec_volumes_persistentvolumeclaims_info

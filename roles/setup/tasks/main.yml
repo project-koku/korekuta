@@ -144,8 +144,8 @@
       when:
         - oc_project.stdout is defined and oc_project != ''
 
-    - name: Check for hccm-usage-report ReportGenerationQuery
-      command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_report_name }}'
+    - name: Check for hccm-usage-report ReportQuery
+      command: '{{ OCP_CLI }} get ReportQuery {{ setup_report_name }}'
       register: oc_get_report_generation_query
       changed_when: false
       ignore_errors: true
@@ -160,8 +160,8 @@
       when:
         - oc_project.stdout is defined and oc_project != ''
 
-    - name: Check for hccm-openshift-persistentvolumeclaim ReportGenerationQuery
-      command: '{{ OCP_CLI }} get ReportGenerationQuery {{ setup_storage_report_name }}'
+    - name: Check for hccm-openshift-persistentvolumeclaim ReportQuery
+      command: '{{ OCP_CLI }} get ReportQuery {{ setup_storage_report_name }}'
       register: oc_get_storage_report_generation_query
       changed_when: false
       ignore_errors: true
