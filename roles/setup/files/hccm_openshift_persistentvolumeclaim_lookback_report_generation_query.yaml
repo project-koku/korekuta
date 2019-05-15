@@ -22,19 +22,19 @@ spec:
       type: timestamp
       unit: date
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: pod
-      type: string
+      type: varchar
       unit: kubernetes_pod
     - name: persistentvolumeclaim
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolumeclaim
     - name: persistentvolume
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolume
     - name: storageclass
-      type: string
+      type: varchar
       unit: kubernetes_storageclass
     - name: persistentvolumeclaim_capacity_bytes
       type: double
@@ -49,9 +49,9 @@ spec:
       type: double
       unit: byte_seconds
     - name: persistentvolume_labels
-      type: string
+      type: varchar
     - name: persistentvolumeclaim_labels
-      type: string
+      type: varchar
   inputs:
     - name: ReportingStart
       type: time

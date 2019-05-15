@@ -14,13 +14,13 @@ spec:
       type: timestamp
       unit: date
     - name: pod
-      type: string
+      type: varchar
       unit: kubernetes_pod
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: node
-      type: string
+      type: varchar
       unit: kubernetes_node
     - name: interval_start
       type: timestamp
@@ -59,9 +59,9 @@ spec:
       type: double
       unit: byte_seconds
     - name: resource_id
-      type: string
+      type: varchar
     - name: pod_labels
-      type: string
+      type: varchar
   inputs:
     - name: ReportingStart
       type: time
