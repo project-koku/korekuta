@@ -1,3 +1,4 @@
+---
 apiVersion: metering.openshift.io/v1alpha1
 kind: ReportQuery
 metadata:
