@@ -92,14 +92,14 @@
 
 - name: Log in to OCP cluster
   command: '{{ OCP_CLI }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
-  when: cat_token.stdout is defined and cat_token != ''
+  when: cat_token.stdout is defined and cat_token
   no_log: true
 
 - name: Run OC Proxy
   command: 'nohup {{ OCP_CLI }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'
   async: 120
   poll: 0
-  when: cat_token.stdout is defined and cat_token != ''
+  when: cat_token.stdout is defined and cat_token
   tags: with_proxy
 
 - name: Download OCP report from endpoint
@@ -141,7 +141,11 @@
     - collect_insights_bypass_gpg == 'True'
 
 - name: Send payload to the Insights Client
-  command: '{{ collect_insights_client_cmd }} {{ collect_insights_bypass_gpg_flag }} --payload={{ collect_archive_path }}/{{ collect_archive_filename }} --content-type={{ collect_content_type }}'
+  command: >-
+    {{ collect_insights_client_cmd }} {{ collect_insights_bypass_gpg_flag }}
+    --payload={{ collect_archive_path }}/{{ collect_archive_filename }}
+    --content-type={{ collect_content_type }}
+
   environment:
     BYPASS_GPG: '{{ collect_insights_bypass_gpg }}'
     EGG: '{{ collect_insights_egg_path }}'

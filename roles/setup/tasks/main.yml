@@ -120,7 +120,7 @@
 
 - name: Log in to OCP cluster
   command: '{{ OCP_CLI }} login {{ OCP_API }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
-  when: cat_token.stdout is defined and cat_token != ''
+  when: cat_token.stdout is defined and cat_token
   no_log: true
 
 - name: Define temp report file data location
@@ -142,7 +142,7 @@
       changed_when: false
       ignore_errors: true
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
 
     - name: Check for hccm-usage-report ReportQuery
       command: '{{ OCP_CLI }} get ReportQuery {{ setup_report_name }}'
@@ -150,7 +150,7 @@
       changed_when: false
       ignore_errors: true
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
 
     - name: Check for hccm-openshift-persistentvolumeclaim Report
       command: '{{ OCP_CLI }} get Report {{ setup_storage_report_name }}'
@@ -158,7 +158,7 @@
       changed_when: false
       ignore_errors: true
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
 
     - name: Check for hccm-openshift-persistentvolumeclaim ReportQuery
       command: '{{ OCP_CLI }} get ReportQuery {{ setup_storage_report_name }}'
@@ -166,7 +166,7 @@
       changed_when: false
       ignore_errors: true
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
 
     - name: Copy hccm-usage-report files
       copy:
@@ -178,7 +178,7 @@
         - 'files/hccm*'
         - 'files/persistentvolume*'
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
         - oc_get_report.rc is defined and  oc_get_report.rc != 0
         - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
         - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
@@ -187,7 +187,7 @@
     - name: Create Operator Metering definitions
       command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir }}'
       when:
-        - oc_project.stdout is defined and oc_project != ''
+        - oc_project.stdout is defined and oc_project
         - oc_get_report.rc is defined and  oc_get_report.rc != 0
         - oc_get_storage_report.rc is defined and  oc_get_storage_report.rc != 0
         - oc_get_report_generation_query.rc is defined and  oc_get_report_generation_query.rc != 0
