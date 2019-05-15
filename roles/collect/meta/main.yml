@@ -10,5 +10,5 @@ galaxy_info:
     - name: RHEL
       versions:
         - all
-  galaxy_tags: ['hccm', 'cost-management', 'openshift', 'kubernetes', 'redhat']
+  galaxy_tags: ['hccm', 'costmanagement', 'openshift', 'kubernetes', 'redhat']
 dependencies: []
