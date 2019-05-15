@@ -9,6 +9,6 @@
 - name: 'Fail if required file is not found'
   fail:
     msg: 'Unable to locate: {{ item }}'
-  when: item.stat.exists
+  when: not item.stat.exists
   with_items:
     - '{{ stat_result.results }}'
