@@ -416,10 +416,10 @@
         },
         "arrow": {
             "hashes": [
-                "sha256:3397e5448952e18e1295bf047014659effa5ae8da6a5371d37ff0ddc46fa6872",
-                "sha256:6f54d9f016c0b7811fac9fb8c2c7fa7421d80c54dbdd75ffb12913c55db60b8a"
+                "sha256:002f2315cf4c8404de737c42860441732d339bbc57fee584e2027520e055ecc1",
+                "sha256:82dd5e13b733787d4eb0fef42d1ee1a99136dc1d65178f70373b3678b3181bfc"
             ],
-            "version": "==0.13.1"
+            "version": "==0.13.2"
         },
         "asn1crypto": {
             "hashes": [
