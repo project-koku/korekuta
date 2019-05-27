@@ -542,9 +542,9 @@
         },
         "click-completion": {
             "hashes": [
-                "sha256:7ca12978493a7450486cef155845af4fae48744c3f97b7250a254de65c9e5e5a"
+                "sha256:78072eecd5e25ea0d25ceaf99cd5f22aa2667d67231ae0819deab9b1ff3456fb"
             ],
-            "version": "==0.3.1"
+            "version": "==0.5.1"
         },
         "colorama": {
             "hashes": [
