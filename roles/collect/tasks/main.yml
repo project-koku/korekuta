@@ -37,7 +37,7 @@
   set_fact:
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
     api_host: '{{ ocp_config["ocp_api"] }}'
-    api_path: '{{ ocp_config["ocp_api_route"] }}'
+    api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
     current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
@@ -65,7 +65,7 @@
 # this appends the string inside the brackets to the 'api_urls' list.
 - name: assemble compiled URL facts, append to list.
   set_fact:
-    api_urls: "{{ api_urls + [api_host+'/'+api_path+item] }}"
+    api_urls: "{{ api_urls + [api_path+item] }}"
   with_items: "{{ api_params }}"
 
 # Use a cluster specific path
