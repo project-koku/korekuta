@@ -16,6 +16,7 @@
     - OCP_API
     - OCP_TOKEN_PATH
     - OCP_METERING_NAMESPACE
+    - METERING_API
 
 - name: Check that OCP_TOKEN_PATH exists
   stat:
@@ -214,6 +215,7 @@
     - config_content.get('ocp_token_file') != OCP_TOKEN_PATH
     - config_content.get('ocp_cluster_id') != ocp_cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
+    - config_content.get('metering_api') != METERING_API
 
 - name: Display New Cluster Identifier
   debug:
