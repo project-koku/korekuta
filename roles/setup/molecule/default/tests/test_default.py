@@ -29,3 +29,4 @@ def test_manifest_file(host):
     assert host.file(config_file).contains('"ocp_metering_namespace":')
     assert host.file(config_file).contains('"ocp_proxy_port":')
     assert host.file(config_file).contains('"ocp_validate_cert":')
+    assert host.file(config_file).contains('"metering_api":')

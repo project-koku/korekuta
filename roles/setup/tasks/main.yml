@@ -16,6 +16,7 @@
     - OCP_API
     - OCP_TOKEN_PATH
     - OCP_METERING_NAMESPACE
+    - METERING_API
 
 - name: Check that OCP_TOKEN_PATH exists
   stat:
@@ -137,7 +138,7 @@
       changed_when: false
 
     - name: Check for hccm-usage-report Report
-      command: '{{ OCP_CLI }} get Report {{ setup_report_name }}'
+      command: '{{ OCP_CLI }} get Report {{ setup_usage_report_name }}'
       register: oc_get_report
       changed_when: false
       ignore_errors: true
@@ -145,7 +146,7 @@
         - oc_project.stdout is defined and oc_project
 
     - name: Check for hccm-usage-report ReportQuery
-      command: '{{ OCP_CLI }} get ReportQuery {{ setup_report_name }}'
+      command: '{{ OCP_CLI }} get ReportQuery {{ setup_usage_report_name }}'
       register: oc_get_report_generation_query
       changed_when: false
       ignore_errors: true
@@ -171,7 +172,7 @@
     - name: Copy hccm-usage-report files
       copy:
         src: '{{ item }}'
-        dest: '{{ ocp_temp_file_dir }}'
+        dest: '{{ ocp_temp_file_dir.path }}'
       with_fileglob:
         - 'files/kube*'
         - 'files/pod*'
@@ -185,7 +186,7 @@
         - oc_get_storage_report_generation_query.rc is defined and  oc_get_storage_report_generation_query.rc != 0
 
     - name: Create Operator Metering definitions
-      command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir }}'
+      command: '{{ OCP_CLI }} create -f {{ ocp_temp_file_dir.path }}'
       when:
         - oc_project.stdout is defined and oc_project
         - oc_get_report.rc is defined and  oc_get_report.rc != 0
@@ -214,6 +215,7 @@
     - config_content.get('ocp_token_file') != OCP_TOKEN_PATH
     - config_content.get('ocp_cluster_id') != ocp_cluster_id
     - config_content.get('ocp_metering_namespace') != OCP_METERING_NAMESPACE
+    - config_content.get('metering_api') != METERING_API
 
 - name: Display New Cluster Identifier
   debug:

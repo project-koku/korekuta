@@ -28,17 +28,6 @@
     files:
       - '{{ ocp_config["ocp_token_file"] }}'
 
-- name: Check for OC command-line
-  stat:
-    path: '{{ OCP_CLI }}'
-  register: check_oc
-
-- name: OCP_CLI does not exits
-  fail:
-    msg: 'No file was found for OCP_CLI at "{{ OCP_CLI }}".'
-  when:
-    - not check_oc.stat.exists
-
 - name: Set facts from OCP config
   set_fact:
     ocp_validate_cert: '{{ ocp_config["ocp_validate_cert"] }}'
@@ -48,17 +37,18 @@
   set_fact:
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
     api_host: '{{ ocp_config["ocp_api"] }}'
-    api_path: 'api/v1/namespaces/{{ ocp_metering_namespace }}'
+    api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
     current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
+    collect_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'
 
-# conditional - with_proxy
-- name: Define facts from OCP config with proxy
-  set_fact:
-    api_host: '{{ collect_proxy_server_no_port }}:{{ ocp_config["ocp_proxy_port"] }}'
-    api_path: '{{ api_path }}/services/https:reporting-operator:http/proxy/api/v1/reports/get'
-  tags: with_proxy
+# When multiple users use the same machine, we can run into file ownership issues here
+# if something goes wrong and the file is not cleaned up
+- name: Move config file to cluster-specific config name
+  command: 'mv /tmp/{{ collect_ocp_config_file | basename }} {{ collect_config_path }}'
+  when: collect_config_path is defined
+
 
 # getting a little clever to build lists to append into
 - name: initialize fact lists
@@ -76,13 +66,19 @@
 # this appends the string inside the brackets to the 'api_urls' list.
 - name: assemble compiled URL facts, append to list.
   set_fact:
-    api_urls: "{{ api_urls + [api_host+'/'+api_path+item] }}"
+    api_urls: "{{ api_urls + [api_path+item] }}"
   with_items: "{{ api_params }}"
+
+# Use a cluster specific path
+- name: Set download_path
+  set_fact:
+    collect_cluster_download_path: '{{ collect_download_path }}/{{ ocp_config["ocp_cluster_id"] }}'
 
 - name: Create temp dir for downloaded files
   file:
-    path: '{{ collect_download_path }}'
+    path: '{{ collect_cluster_download_path }}'
     state: directory
+    mode: 0777
 
 - name: Read the OCP token
   command: 'cat {{ ocp_config["ocp_token_file"] }}'
@@ -90,22 +86,11 @@
   changed_when: false
   no_log: true
 
-- name: Log in to OCP cluster
-  command: '{{ OCP_CLI }} login {{ ocp_config["ocp_api"] }} {{ ocp_insecure_login }} --token {{ cat_token.stdout }}'
-  when: cat_token.stdout is defined and cat_token
-  no_log: true
-
-- name: Run OC Proxy
-  command: 'nohup {{ OCP_CLI }} proxy --port={{ ocp_config["ocp_proxy_port"] }} </dev/null >/dev/null 2>&1 &'
-  async: 120
-  poll: 0
-  when: cat_token.stdout is defined and cat_token
-  tags: with_proxy
-
 - name: Download OCP report from endpoint
   get_url:
     url: '{{ item }}'
-    dest: '{{ collect_download_path }}/{{ current_csv_uuid }}_openshift_usage_report.{{ idx }}.{{ collect_format }}'
+    headers: "Authorization:Bearer {{ cat_token.stdout }}"
+    dest: '{{ collect_cluster_download_path }}/{{ current_csv_uuid }}_openshift_usage_report.{{ idx }}.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
   with_items: "{{ api_urls }}"
   loop_control:
@@ -124,13 +109,13 @@
 - name: Generate archive manifest
   template:
     src: 'templates/manifest.j2'
-    dest: '{{ collect_download_path }}/manifest.json'
+    dest: '{{ collect_cluster_download_path }}/manifest.json'
 
 - name: Create tarball
   archive:
     format: '{{ collect_archive_format }}'
     dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path: "{{ collect_download_path }}"
+    path: "{{ collect_cluster_download_path }}"
     remove: '{{ collect_delete_after }}'
   register: archive_result
 
@@ -154,13 +139,13 @@
 
 - name: Remove temp files
   file:
-    path: '{{ collect_download_path }}'
+    path: '{{ collect_cluster_download_path }}'
     state: absent
   when: collect_delete_after
 
 - name: Remove temp config
   file:
-    path: '/tmp/{{ collect_ocp_config_file | basename }}'
+    path: '{{ collect_config_path }}'
     state: absent
   when: collect_delete_after
 
