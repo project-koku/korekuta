@@ -10,7 +10,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disab
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
 csv_uuid = 'd7449564-67a4-4507-86f2-db70055aa12a'  # pylint: disable=invalid-name
-cluster_id = 'test-cluster-id'
+cluster_id = 'test-cluster-id'  # pylint: disable=invalid-name
 
 
 def test_download_path(host):
