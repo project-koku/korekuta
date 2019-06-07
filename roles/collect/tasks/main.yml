@@ -41,13 +41,13 @@
     current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
-    temp_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'
+    collect_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'
 
 # When multiple users use the same machine, we can run into file ownership issues here
 # if something goes wrong and the file is not cleaned up
 - name: Move config file to cluster-specific config name
-  command: 'mv /tmp/{{ collect_ocp_config_file | basename }} {{ temp_config_path }}'
-  when: temp_config_path is defined
+  command: 'mv /tmp/{{ collect_ocp_config_file | basename }} {{ collect_config_path }}'
+  when: collect_config_path is defined
 
 
 # getting a little clever to build lists to append into
@@ -145,7 +145,7 @@
 
 - name: Remove temp config
   file:
-    path: '{{ temp_config_path }}'
+    path: '{{ collect_config_path }}'
     state: absent
   when: collect_delete_after
 
