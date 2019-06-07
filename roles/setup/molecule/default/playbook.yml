@@ -7,6 +7,7 @@
     OCP_TOKEN_PATH: "{{ ansible_env.HOME }}/ocp_token"
     OCP_METERING_NAMESPACE: metering
     OCP_CLI: /usr/local/bin/oc
+    METERING_API: http://127.0.0.1
     setup_reports: false
 
   roles:

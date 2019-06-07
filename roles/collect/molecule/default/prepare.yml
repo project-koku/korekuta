@@ -4,7 +4,7 @@
   gather_facts: true
   vars:
     test_paths:
-      - '/api/v1/namespaces/metering/test/services/https:reporting-operator:http/proxy/api/v1/reports/get'
+      - '/api/v1/reports/get'
   tasks:
     - name: install openshift client
       include_role:
@@ -19,7 +19,7 @@
     - name: create test setup.json
       copy:
         dest: '/tmp/ocp-test-config.json'
-        content: '{"ocp_api":"http://localhost:8001", "ocp_token_file":"/tmp/collect-test-token", "ocp_cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test", "ocp_proxy_port": "8001", "ocp_validate_cert": "false"}'
+        content: '{"ocp_api":"http://localhost:8001", "metering_api":"http://localhost:8001", "ocp_token_file":"/tmp/collect-test-token", "ocp_cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test", "ocp_proxy_port": "8001", "ocp_validate_cert": "false"}'
         mode: '0644'
 
     - name: create test token file
