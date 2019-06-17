@@ -19,7 +19,7 @@
     - name: create test setup.json
       copy:
         dest: '/tmp/ocp-test-config.json'
-        content: '{"ocp_api":"http://localhost:8001", "metering_api":"http://localhost:8001", "ocp_token_file":"/tmp/collect-test-token", "ocp_cluster_id": "test-cluster-id", "ocp_metering_namespace": "metering/test", "ocp_proxy_port": "8001", "ocp_validate_cert": "false"}'
+        content: '{"ocp_api":"http://localhost:8001", "metering_api":"http://localhost:8001", "ocp_token_file":"/tmp/collect-test-token", "ocp_cluster_id": "bbb0b82b-e40d-41eb-8354-e07bc6a26a38", "ocp_metering_namespace": "metering/test", "ocp_proxy_port": "8001", "ocp_validate_cert": "false"}'
         mode: '0644'
 
     - name: create test token file
