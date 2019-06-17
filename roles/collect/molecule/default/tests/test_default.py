@@ -9,7 +9,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disab
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
-cluster_id = 'd7449564-67a4-4507-86f2-db70055aa12a'  # pylint: disable=invalid-name
+cluster_id = 'bbb0b82b-e40d-41eb-8354-e07bc6a26a38'  # pylint: disable=invalid-name
 
 
 def test_download_path(host):
