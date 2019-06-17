@@ -1,4 +1,15 @@
 ---
+- name: Ensure needed variables are set
+  fail:
+    msg: 'You must supply "-e {{ item }}=<{{ item }}>".'
+  when: 'item is not defined'
+  with_items:
+    - OCP_CLUSTER_ID
+
+- name: Define OCP Usage configuration defaults
+  set_fact:
+    collect_ocp_config_file: '{{ collect_ocp_config_file_cluster_root }}/{{ OCP_CLUSTER_ID }}/{{ collect_ocp_config_filename }}'
+
 # looping over blocks isn't available, so we'll loop over included tasks instead.
 # see: https://github.com/ansible/ansible/issues/13262#issuecomment-335904803
 - name: validate dependencies
@@ -9,6 +20,7 @@
       - '{{ collect_ocp_config_file }}'
   tags:
     - validate
+
 
 - name: Fetch OCP config file from remote host
   fetch:
@@ -38,7 +50,7 @@
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
     api_host: '{{ ocp_config["ocp_api"] }}'
     api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
-    current_csv_uuid: '{{ collect_csv_uuid }}'  # bug workaround
+    current_csv_uuid: '{{ OCP_CLUSTER_ID }}'
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
     collect_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'

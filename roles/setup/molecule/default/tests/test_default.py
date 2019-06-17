@@ -8,7 +8,7 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disable=invalid-name
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
-CONFIG_DIRECTORY = '/root/.config/ocp_usage'
+CONFIG_DIRECTORY = '/root/.config/ocp_usage/bbb0b82b-e40d-41eb-8354-e07bc6a26a38/'
 
 
 def test_config_directory(host):

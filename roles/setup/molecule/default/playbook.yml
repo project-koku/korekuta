@@ -9,6 +9,7 @@
     OCP_CLI: /usr/local/bin/oc
     METERING_API: http://127.0.0.1
     setup_reports: false
+    ocp_cluster_id: "bbb0b82b-e40d-41eb-8354-e07bc6a26a38"
 
   roles:
     - role: setup
