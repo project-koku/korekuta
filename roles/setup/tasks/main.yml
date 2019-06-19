@@ -71,18 +71,20 @@
 - name: Generate random UUID for cluster identifier
   set_fact:
     ocp_cluster_id: '{{ 9999999999999999999999 | random | to_uuid }}'
+  when:
+    - ocp_cluster_id is not defined
 
 - name: Define OCP Usage configuration defaults
   set_fact:
-    ocp_usage_config_dir: '{{ ansible_env.HOME }}/.config/ocp_usage'
-    ocp_usage_config_file: '{{ ansible_env.HOME }}/.config/ocp_usage/config.json'
+    ocp_usage_config_dir: '{{ ansible_env.HOME }}/.config/ocp_usage/{{ ocp_cluster_id }}/'
+    ocp_usage_config_file: '{{ ansible_env.HOME }}/.config/ocp_usage/{{ ocp_cluster_id }}/config.json'
   when:
     - OCP_USAGE_CONFIG_DIR is not defined
 
 - name: Define OCP Usage configuration
   set_fact:
-    ocp_usage_config_dir: '{{ OCP_USAGE_CONFIG_DIR }}'
-    ocp_usage_config_file: '{{ OCP_USAGE_CONFIG_DIR }}/config.json'
+    ocp_usage_config_dir: '{{ OCP_USAGE_CONFIG_DIR }}/{{ ocp_cluster_id }}/'
+    ocp_usage_config_file: '{{ OCP_USAGE_CONFIG_DIR }}/{{ ocp_cluster_id }}/config.json'
   when:
     - OCP_USAGE_CONFIG_DIR is defined
 

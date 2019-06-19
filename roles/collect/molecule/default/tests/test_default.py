@@ -9,8 +9,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disab
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
-csv_uuid = 'd7449564-67a4-4507-86f2-db70055aa12a'  # pylint: disable=invalid-name
-cluster_id = 'test-cluster-id'  # pylint: disable=invalid-name
+cluster_id = 'bbb0b82b-e40d-41eb-8354-e07bc6a26a38'  # pylint: disable=invalid-name
 
 
 def test_download_path(host):
@@ -21,8 +20,8 @@ def test_download_path(host):
 
 def test_csv_file(host):
     """Test csv file."""
-    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
-                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
+    test_files = ['{}_openshift_usage_report.0.csv'.format(cluster_id),
+                  '{}_openshift_usage_report.1.csv'.format(cluster_id)]
     for file_name in test_files:
         csv_file = download_path + '/{}/{}'.format(cluster_id, file_name)
         assert host.file(csv_file).exists
@@ -31,8 +30,8 @@ def test_csv_file(host):
 
 def test_manifest_file(host):
     """Test manifest file and contents."""
-    test_files = ['{}_openshift_usage_report.0.csv'.format(csv_uuid),
-                  '{}_openshift_usage_report.1.csv'.format(csv_uuid)]
+    test_files = ['{}_openshift_usage_report.0.csv'.format(cluster_id),
+                  '{}_openshift_usage_report.1.csv'.format(cluster_id)]
     manifest_file = download_path + '/{}'.format(cluster_id) + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
@@ -41,8 +40,8 @@ def test_manifest_file(host):
         assert keyname in manifest
     for file_name in test_files:
         assert file_name in manifest.get('files')
-    assert manifest.get('uuid') == csv_uuid
-    assert manifest.get('cluster_id') == 'test-cluster-id'
+    assert manifest.get('uuid') == cluster_id
+    assert manifest.get('cluster_id') == cluster_id
 
 
 def test_archive_file(host):
