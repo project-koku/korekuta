@@ -231,38 +231,38 @@ spec:
       NCC.resource_id,
       PL.pod_labels
     FROM cte_hourly_pod_cpu_usage AS PCUR
-    JOIN cte_hourly_pod_cpu_requests AS PCRR
+    LEFT JOIN cte_hourly_pod_cpu_requests AS PCRR
         ON PCUR.pod = PCRR.pod
           AND PCUR.namespace = PCRR.namespace
           AND PCUR.node = PCRR.node
           AND PCUR.interval_start = PCRR.interval_start
-    JOIN cte_hourly_pod_cpu_limits AS PCLR
+    LEFT JOIN cte_hourly_pod_cpu_limits AS PCLR
         ON PCUR.pod = PCLR.pod
           AND PCUR.namespace = PCLR.namespace
           AND PCUR.node = PCLR.node
           AND PCUR.interval_start = PCLR.interval_start
-    JOIN cte_hourly_pod_memory_usage AS PMUR
+    LEFT JOIN cte_hourly_pod_memory_usage AS PMUR
         ON PCUR.pod = PMUR.pod
           AND PCUR.namespace = PMUR.namespace
           AND PCUR.node = PMUR.node
           AND PCUR.interval_start = PMUR.interval_start
-    JOIN cte_hourly_pod_memory_requests AS PMRR
+    LEFT JOIN cte_hourly_pod_memory_requests AS PMRR
         ON PCUR.pod = PMRR.pod
           AND PCUR.namespace = PMRR.namespace
           AND PCUR.node = PMRR.node
           AND PCUR.interval_start = PMRR.interval_start
-    JOIN cte_hourly_pod_memory_limits AS PMLR
+    LEFT JOIN cte_hourly_pod_memory_limits AS PMLR
         ON PCUR.pod = PMLR.pod
           AND PCUR.namespace = PMLR.namespace
           AND PCUR.node = PMLR.node
           AND PCUR.interval_start = PMLR.interval_start
-    JOIN cte_hourly_node_capacity_cpu AS NCC
+    LEFT JOIN cte_hourly_node_capacity_cpu AS NCC
         ON PCUR.node = NCC.node
           AND PCUR.interval_start = NCC.interval_start
-    JOIN cte_hourly_node_capacity_memory AS NMC
+    LEFT JOIN cte_hourly_node_capacity_memory AS NMC
         ON PCUR.node = NMC.node
           AND PCUR.interval_start = NMC.interval_start
-    JOIN cte_hourly_pod_labels AS PL
+    LEFT JOIN cte_hourly_pod_labels AS PL
         ON PCUR.namespace = PL.namespace
           AND PCUR.pod = PL.pod
           AND PCUR.interval_start = PL.interval_start
