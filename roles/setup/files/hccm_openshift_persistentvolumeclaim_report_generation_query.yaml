@@ -166,11 +166,11 @@ spec:
       PVCL.persistentvolumeclaim_labels,
       PVL.persistentvolume_labels
     FROM cte_hourly_persistentvolumeclaim_usage AS PVCU
-    JOIN cte_hourly_persistentvolumeclaim_requests AS PVCR
+    LEFT JOIN cte_hourly_persistentvolumeclaim_requests AS PVCR
         ON PVCU.namespace = PVCR.namespace
           AND PVCU.persistentvolumeclaim = PVCR.persistentvolumeclaim
           AND PVCU.interval_start = PVCR.interval_start
-    JOIN cte_hourly_persistentvolumeclaim_capacity AS PVCC
+    LEFT JOIN cte_hourly_persistentvolumeclaim_capacity AS PVCC
         ON PVCU.namespace = PVCC.namespace
           AND PVCU.persistentvolumeclaim = PVCC.persistentvolumeclaim
           AND PVCU.interval_start = PVCC.interval_start
