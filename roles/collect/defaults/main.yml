@@ -8,6 +8,7 @@ collect_archive_format: gz
 collect_archive_path: '/tmp'
 collect_archive_name: korekuta
 collect_delete_after: 'true'
+collect_manifest_uuid: '{{ 99999999999999999999 | random | to_uuid }}'
 collect_insights_client_cmd: '/usr/bin/insights-client'
 collect_download_path: '/tmp/korekuta-collect'
 collect_ocp_config_file_cluster_root: '{{ ansible_env.HOME }}/.config/ocp_usage'
