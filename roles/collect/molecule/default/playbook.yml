@@ -8,4 +8,5 @@
       collect_archive_format: bz2
       OCP_CLI: /usr/local/bin/oc
       collect_with_proxy: false
+      collect_csv_uuid: 'd7449564-67a4-4507-86f2-db70055aa12a'
       OCP_CLUSTER_ID: 'bbb0b82b-e40d-41eb-8354-e07bc6a26a38'
