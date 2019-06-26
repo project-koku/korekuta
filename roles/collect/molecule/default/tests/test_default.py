@@ -10,6 +10,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(  # pylint: disab
 
 download_path = '/tmp/korekuta-collect'  # pylint: disable=invalid-name
 cluster_id = 'bbb0b82b-e40d-41eb-8354-e07bc6a26a38'  # pylint: disable=invalid-name
+collect_csv_uuid = 'd7449564-67a4-4507-86f2-db70055aa12a'
 
 
 def test_download_path(host):
@@ -40,7 +41,7 @@ def test_manifest_file(host):
         assert keyname in manifest
     for file_name in test_files:
         assert file_name in manifest.get('files')
-    assert manifest.get('uuid') == cluster_id
+    assert manifest.get('uuid') == collect_csv_uuid
     assert manifest.get('cluster_id') == cluster_id
 
 
