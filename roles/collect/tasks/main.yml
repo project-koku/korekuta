@@ -50,7 +50,7 @@
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
     api_host: '{{ ocp_config["ocp_api"] }}'
     api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
-    collect_file_prefix: {{ OCP_CLUSTER_ID }}
+    collect_file_prefix: '{{ OCP_CLUSTER_ID }}'
     collect_manifest_uuid: '{{ collect_csv_uuid }}'
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
