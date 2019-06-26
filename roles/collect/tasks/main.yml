@@ -51,7 +51,7 @@
     api_host: '{{ ocp_config["ocp_api"] }}'
     api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
     collect_file_prefix: '{{ OCP_CLUSTER_ID }}'
-    collect_manifest_uuid: '{{ collect_csv_uuid }}'
+    collect_manifest_uuid: '{{ collect_manifest_uuid }}'
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
     collect_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'
