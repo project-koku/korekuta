@@ -45,8 +45,6 @@ usage() {
          -e OCP_METERING_NAMESPACE=metering
     * Provide OpenShift Container Platform CLI (defaults to /usr/bin/oc):
          -e OCP_CLI=/usr/local/bin/oc
-    * Provide OpenShift Proxy Port (defaults to 8001):
-         -e OCP_PROXY_PORT=8001
     * Validate OpenShift SSL Certifates  (defaults to false):
          -e OCP_SSL_CERT_VALIDATION=false
     * Provide OpenShift Cluster Identifier:

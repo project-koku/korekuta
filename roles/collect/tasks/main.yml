@@ -54,7 +54,8 @@
     collect_manifest_uuid: '{{ collect_manifest_uuid }}'
     format: "&format={{ collect_format }}"
     namespace: "&namespace={{ ocp_metering_namespace }}"
-    collect_config_path: '/tmp/{{ ocp_config["ocp_cluster_id"] }}_{{ collect_ocp_config_file | basename }}'
+    collect_config_path: '/tmp/{{ OCP_CLUSTER_ID }}_{{ collect_ocp_config_file | basename }}'
+    OCP_CLI: ocp_config["ocp_cli"]
 
 # When multiple users use the same machine, we can run into file ownership issues here
 # if something goes wrong and the file is not cleaned up
@@ -62,13 +63,13 @@
   command: 'mv /tmp/{{ collect_ocp_config_file | basename }} {{ collect_config_path }}'
   when: collect_config_path is defined
 
-
 # getting a little clever to build lists to append into
 - name: initialize fact lists
   set_fact:
     api_params: []
     api_urls: []
     csv_files: []
+    csv_files_full_path: []
 
 # this appends the string inside the brackets to the 'api_params' list.
 - name: compile URL query params, append to param list
@@ -85,7 +86,7 @@
 # Use a cluster specific path
 - name: Set download_path
   set_fact:
-    collect_cluster_download_path: '{{ collect_download_path }}/{{ ocp_config["ocp_cluster_id"] }}'
+    collect_cluster_download_path: '{{ collect_download_path }}/{{  OCP_CLUSTER_ID }}'
 
 - name: Create temp dir for downloaded files
   file:
@@ -113,7 +114,22 @@
 - name: append filename to fact list
   set_fact:
     csv_files: "{{ csv_files + [item.dest | basename] }}"
+    csv_files_full_path: "{{ csv_files_full_path + [item.dest] }}"
   with_items: "{{ download_result.results }}"
+
+- name: Check that required files exist
+  stat:
+    path: '{{ item }}'
+  register: csv_stat_result
+  with_items:
+    - '{{ csv_files_full_path }}'
+
+- name: Check for empty download results
+  fail:
+    msg: 'Downloaded file {{ item }} has no content or could not be found: {{ item.stat }}.'
+  when: not item.stat.exists or (item.stat.exists and item.stat.size <= 0)
+  with_items:
+    - '{{ csv_stat_result.results }}'
 
 - name: CSV filename to json
   set_fact:
