@@ -106,6 +106,7 @@
     headers: "Authorization:Bearer {{ cat_token.stdout }}"
     dest: '{{ collect_cluster_download_path }}/{{ collect_file_prefix }}_openshift_usage_report.{{ idx }}.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
+    timeout: '{{ collect_ocp_report_timeout }}'
   with_items: "{{ api_urls }}"
   loop_control:
     index_var: idx

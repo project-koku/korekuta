@@ -18,3 +18,4 @@ collect_content_type: 'application/vnd.redhat.hccm.tar+tgz'
 collect_insights_bypass_gpg: 'False'
 collect_insights_egg_path: '/etc/insights-client/rpm.egg'
 collect_insights_bypass_gpg_flag: ''
+collect_ocp_report_timeout: 60
