@@ -21,8 +21,8 @@ def test_download_path(host):
 
 def test_csv_file(host):
     """Test csv file."""
-    test_files = ['{}_openshift_usage_report.0.csv'.format(cluster_id),
-                  '{}_openshift_usage_report.1.csv'.format(cluster_id)]
+    test_files = ['{}_openshift_usage_report.0.csv'.format(collect_manifest_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(collect_manifest_uuid)]
     for file_name in test_files:
         csv_file = download_path + '/{}/{}'.format(cluster_id, file_name)
         assert host.file(csv_file).exists
@@ -31,8 +31,8 @@ def test_csv_file(host):
 
 def test_manifest_file(host):
     """Test manifest file and contents."""
-    test_files = ['{}_openshift_usage_report.0.csv'.format(cluster_id),
-                  '{}_openshift_usage_report.1.csv'.format(cluster_id)]
+    test_files = ['{}_openshift_usage_report.0.csv'.format(collect_manifest_uuid),
+                  '{}_openshift_usage_report.1.csv'.format(collect_manifest_uuid)]
     manifest_file = download_path + '/{}'.format(cluster_id) + '/manifest.json'
     assert host.file(manifest_file).exists
     assert host.file(manifest_file).is_file
