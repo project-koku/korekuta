@@ -68,7 +68,6 @@
     api_params: []
     api_urls: []
     csv_files: []
-    csv_files_full_path: []
 
 # this appends the string inside the brackets to the 'api_params' list.
 - name: compile URL query params, append to param list
@@ -120,15 +119,14 @@
 - name: append filename to fact list
   set_fact:
     csv_files: "{{ csv_files + [item.dest | basename] }}"
-    csv_files_full_path: "{{ csv_files_full_path + [item.dest] }}"
   with_items: "{{ download_result.results }}"
 
 - name: Check that required files exist
   stat:
-    path: '{{ item }}'
+    path: '{{ collect_cluster_download_path + "/" + item }}'
   register: csv_stat_result
   with_items:
-    - '{{ csv_files_full_path }}'
+    - '{{ csv_files }}'
 
 - name: Check for empty download results
   fail:
