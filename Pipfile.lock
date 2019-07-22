@@ -16,10 +16,10 @@
     "default": {
         "adal": {
             "hashes": [
-                "sha256:82e84fa0b442caf8131f1e87a7ebee2546f57ab16a8917a599a02b6e455cb1b0",
-                "sha256:b6edd095be66561382bdaa59d40b04490e93149fb3b7fa44c1fa5504eed5b8b9"
+                "sha256:5a7f1e037c6290c6d7609cab33a9e5e988c2fbec5c51d1c4c649ee3faff37eaf",
+                "sha256:fd17e5661f60634ddf96a569b95d34ccb8a98de60593d729c28bdcfe360eaad1"
             ],
-            "version": "==1.2.1"
+            "version": "==1.2.2"
         },
         "ansible": {
             "hashes": [
