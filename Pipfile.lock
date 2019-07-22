@@ -23,10 +23,9 @@
         },
         "ansible": {
             "hashes": [
-                "sha256:84a42d1e371c4222c82e575cb6961fafd3afe920d84e4b6d87affabe400be294"
+                "sha256:1e5ba829ca0602c55b33da399b06f99b135a34014b661d1c36d8892a1e2d3730"
             ],
-            "index": "pypi",
-            "version": "==2.7.10"
+            "version": "==2.8.2"
         },
         "asn1crypto": {
             "hashes": [
@@ -402,10 +401,9 @@
     "develop": {
         "ansible": {
             "hashes": [
-                "sha256:84a42d1e371c4222c82e575cb6961fafd3afe920d84e4b6d87affabe400be294"
+                "sha256:1e5ba829ca0602c55b33da399b06f99b135a34014b661d1c36d8892a1e2d3730"
             ],
-            "index": "pypi",
-            "version": "==2.7.10"
+            "version": "==2.8.2"
         },
         "ansible-lint": {
             "hashes": [
