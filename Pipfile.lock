@@ -411,9 +411,9 @@
         },
         "anyconfig": {
             "hashes": [
-                "sha256:4d6016ae6eecc5e502bc7e99ae0639c5710c5c67bde5f21b06b9eaafd9ce0e7e"
+                "sha256:621b0b5f08efd2e375596b50f79943200d90f0397fed55cf0d2f5f484e005e9d"
             ],
-            "version": "==0.9.7"
+            "version": "==0.9.9"
         },
         "arrow": {
             "hashes": [
