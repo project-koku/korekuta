@@ -10,6 +10,10 @@
   set_fact:
     collect_ocp_config_file: '{{ collect_ocp_config_file_cluster_root }}/{{ OCP_CLUSTER_ID }}/{{ collect_ocp_config_filename }}'
 
+- name: Define Cluster-unique config file name
+  set_fact:
+    collect_ocp_cluster_config_file: '/tmp/{{ OCP_CLUSTER_ID }}_{{ collect_ocp_config_file }}'
+
 # looping over blocks isn't available, so we'll loop over included tasks instead.
 # see: https://github.com/ansible/ansible/issues/13262#issuecomment-335904803
 - name: validate dependencies
@@ -24,13 +28,13 @@
 - name: Fetch OCP config file from remote host
   fetch:
     src: '{{ collect_ocp_config_file }}'
-    dest: '/tmp/'
+    dest: '{{ collect_ocp_cluster_config_file }}'
     fail_on_missing: true
     flat: true
 
 - name: Read in OCP configuration file
   include_vars:
-    file: '/tmp/{{ collect_ocp_config_file | basename }}'
+    file: '{{ collect_ocp_cluster_config_file }}'
     name: ocp_config
 
 - name: validate ocp_config_file dependencies
