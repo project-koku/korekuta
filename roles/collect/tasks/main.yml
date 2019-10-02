@@ -60,12 +60,6 @@
     collect_config_path: '/tmp/{{ OCP_CLUSTER_ID }}_{{ collect_ocp_config_file | basename }}'
     OCP_CLI: ocp_config["ocp_cli"]
 
-# When multiple users use the same machine, we can run into file ownership issues here
-# if something goes wrong and the file is not cleaned up
-- name: Move config file to cluster-specific config name
-  command: 'mv -f /tmp/{{ collect_ocp_config_file | basename }} {{ collect_config_path }}'
-  when: collect_config_path is defined
-
 # getting a little clever to build lists to append into
 - name: initialize fact lists
   set_fact:
