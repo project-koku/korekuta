@@ -224,12 +224,12 @@
 
 - name: Display New Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ ocp_cluster_id }}, for the cluster identifier when configuring an OpenShift source for Cost Management.'
+    msg: 'Use the value {{ ocp_cluster_id }} for the cluster identifier when configuring an OpenShift source for Cost Management.'
   when:
     - config_content is not defined
 
 - name: Display Current Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ config_content.get("ocp_cluster_id") }}, for the cluster identifier when configuring an OpenShift source for Cost Management.'
+    msg: 'Use the value {{ config_content.get("ocp_cluster_id") }} for the cluster identifier when configuring an OpenShift source for Cost Management.'
   when:
     - config_content is defined
