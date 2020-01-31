@@ -8,21 +8,21 @@ metadata:
 spec:
   columns:
     - name: pod
-      type: string
+      type: varchar
       unit: kubernetes_pod
     - name: persistentvolumeclaim
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolumeclaim
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: labels
-      type: map<string, string>
+      type: map<varchar, varchar>
     - name: timestamp
       type: timestamp
       unit: date
     - name: dt
-      type: string
+      type: varchar
   inputs:
     - default: kube-pod-persistentvolumeclaim-info
       name: KubePodPersistentVolumeClaimInfoDataSourceName

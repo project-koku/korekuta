@@ -55,9 +55,25 @@
   when:
     - not check_oc.stat.exists
 
-- name: Generate random UUID for cluster identifier
+- name: Get a Cluster Version object
+  k8s_facts:
+    api_version: config.openshift.io/v1
+    kind: ClusterVersion
+    name: version
+  register: cluster_version_object
+  when:
+    - ocp_cluster_id is not defined
+
+- name: Extract clusterID from Cluster Version object
   set_fact:
-    ocp_cluster_id: '{{ 9999999999999999999999 | random | to_uuid }}'
+    ocp_cluster_id: '{{ cluster_version_object.resources[0].get("spec", {}).get("clusterID") }}'
+  when:
+    - cluster_version_object is defined
+    - ocp_cluster_id is not defined
+
+- name: Could not obtain OpenShift Cluster ID
+  fail:
+    msg: 'Unable to obtain the OpenShift Cluster ID.'
   when:
     - ocp_cluster_id is not defined
 
@@ -208,12 +224,12 @@
 
 - name: Display New Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ ocp_cluster_id }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
+    msg: 'Use the value {{ ocp_cluster_id }} for the cluster identifier when configuring an OpenShift source for Cost Management.'
   when:
     - config_content is not defined
 
 - name: Display Current Cluster Identifier
   debug:
-    msg: 'Use the following value, {{ config_content.get("ocp_cluster_id") }}, for the cluster identifier when configuring an OCP provider in Cost Management.'
+    msg: 'Use the value {{ config_content.get("ocp_cluster_id") }} for the cluster identifier when configuring an OpenShift source for Cost Management.'
   when:
     - config_content is defined
