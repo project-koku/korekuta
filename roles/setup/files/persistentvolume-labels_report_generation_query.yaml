@@ -8,18 +8,18 @@ metadata:
 spec:
   columns:
     - name: persistentvolume
-      type: string
+      type: varchar
       unit: kubernetes_persistentvolume
     - name: namespace
-      type: string
+      type: varchar
       unit: kubernetes_namespace
     - name: labels
-      type: map<string, string>
+      type: map<varchar, varchar>
     - name: timestamp
       type: timestamp
       unit: date
     - name: dt
-      type: string
+      type: varchar
   inputs:
     - default: kube-persistentvolume-labels
       name: KubePersistentvolumeLabelsDataSourceName
