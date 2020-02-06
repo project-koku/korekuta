@@ -25,6 +25,10 @@
             token: o6tv5qedPqzJy_AWRb_y9OOHhB6ffTZM-7ecpCgthCY
 
   tasks:
+    - name: install python
+      include_role:
+        name: andrewrothstein.python
+
     - name: install openshift client
       include_role:
         name: andrewrothstein.openshift-origin-client-tools
