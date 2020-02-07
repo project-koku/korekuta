@@ -55,6 +55,12 @@
   when:
     - not check_oc.stat.exists
 
+- name: Check python dependencies
+  python_requirements_facts:
+    dependencies:
+      - openshift
+      - requests
+
 - name: Get a Cluster Version object
   k8s_facts:
     api_version: config.openshift.io/v1
