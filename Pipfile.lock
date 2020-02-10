@@ -982,11 +982,10 @@
         },
         "tox": {
             "hashes": [
-                "sha256:5d6b9e7ad99a93b00ecd509e13552600d38eedd2b035ba24709f850b23f51254",
-                "sha256:fee5b4fa2fb1638b57879a1fcaefbfd16201d8d7ecb9956406855a85d518ac4c"
+                "sha256:06ba73b149bf838d5cd25dc30c2dd2671ae5b2757cf98e5c41a35fe449f131b3",
+                "sha256:806d0a9217584558cc93747a945a9d9bff10b141a5287f0c8429a08828a22192"
             ],
-            "index": "pypi",
-            "version": "==3.10.0"
+            "version": "==3.14.3"
         },
         "tree-format": {
             "hashes": [
