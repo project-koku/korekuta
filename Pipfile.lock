@@ -182,10 +182,10 @@
         },
         "kubernetes": {
             "hashes": [
-                "sha256:25928c6067dd47fd45c2960ecc3199d901cd9faeb9ff511ba7eeced3ecf30a78",
-                "sha256:9ce361926687344b4fd1fc661555800b8b6b0d9586f3260a27048aa227161a30"
+                "sha256:3770a496663396ad1def665eeadb947b3f45217a08b64b10c01a57e981ac8592",
+                "sha256:a6dee02a1b39ea4bb9c4c2cc415ea0ada33d8ea0a920f7d4fb6d166989dcac01"
             ],
-            "version": "==8.0.1"
+            "version": "==10.0.1"
         },
         "markupsafe": {
             "hashes": [
