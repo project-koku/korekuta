@@ -235,10 +235,10 @@
         },
         "paramiko": {
             "hashes": [
-                "sha256:3c16b2bfb4c0d810b24c40155dbfd113c0521e7e6ee593d704e84b4c658a1f3b",
-                "sha256:a8975a7df3560c9f1e2b43dc54ebd40fd00a7017392ca5445ce7df409f900fcb"
+                "sha256:920492895db8013f6cc0179293147f830b8c7b21fdfc839b6bad760c27459d9f",
+                "sha256:9c980875fa4d2cb751604664e9a2d0f69096643f5be4db1b99599fe114a97b2f"
             ],
-            "version": "==2.4.2"
+            "version": "==2.7.1"
         },
         "pyasn1": {
             "hashes": [
@@ -745,10 +745,10 @@
         },
         "paramiko": {
             "hashes": [
-                "sha256:3c16b2bfb4c0d810b24c40155dbfd113c0521e7e6ee593d704e84b4c658a1f3b",
-                "sha256:a8975a7df3560c9f1e2b43dc54ebd40fd00a7017392ca5445ce7df409f900fcb"
+                "sha256:920492895db8013f6cc0179293147f830b8c7b21fdfc839b6bad760c27459d9f",
+                "sha256:9c980875fa4d2cb751604664e9a2d0f69096643f5be4db1b99599fe114a97b2f"
             ],
-            "version": "==2.4.2"
+            "version": "==2.7.1"
         },
         "pathspec": {
             "hashes": [
