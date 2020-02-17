@@ -722,11 +722,10 @@
         },
         "molecule": {
             "hashes": [
-                "sha256:0e9ef6845cdf2a01f6c386445e4e54add3f515a033ee16b7b658e6122c8f0d76",
-                "sha256:621797c54299775f284bbb010d5bb9be485500eecaaa14a476cbc0df285d0da7"
+                "sha256:12fa4231ed69c6e7f50432588eaace36cea917a8c73c1751269ce55df32ced24",
+                "sha256:d9d7621167041ae2a8eb19f1f8dc23c071cdab2cd3ca80655e2c8796b4c00e09"
             ],
-            "index": "pypi",
-            "version": "==2.20.1"
+            "version": "==2.22"
         },
         "monotonic": {
             "hashes": [
