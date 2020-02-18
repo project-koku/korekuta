@@ -56,13 +56,13 @@
     - not check_oc.stat.exists
 
 - name: Check python dependencies
-  python_requirements_facts:
+  python_requirements_info:
     dependencies:
       - openshift
       - requests
 
 - name: Get a Cluster Version object
-  k8s_facts:
+  k8s_info:
     api_version: config.openshift.io/v1
     kind: ClusterVersion
     name: version
