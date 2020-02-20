@@ -36,7 +36,7 @@
     - name: create test file
       copy:
         dest: "{{ item }}/get"
-        src: 'test_data.csv'
+        content: 'this,is,test,data'
       with_items: "{{ test_paths }}"
 
     - name: launch test web server
