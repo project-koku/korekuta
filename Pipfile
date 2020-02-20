@@ -14,3 +14,5 @@ molecule = {extras = ["docker"],version = ">=2.20"}
 flake8 = ">=3.7"
 pylint = ">=2.4"
 selinux = {version = ">=0.2",sys_platform = "== 'linux'"}
+pyyaml = ">=5.3"
+testinfra = ">=4.0.0"
