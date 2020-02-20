@@ -1,0 +1,43 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportQuery
+metadata:
+  labels:
+    cost-management: "true"
+  name: hccm-openshift-node-labels-lookback
+spec:
+  view:
+    disabled: true
+  columns:
+    - name: report_period_start
+      type: timestamp
+      unit: date
+    - name: report_period_end
+      type: timestamp
+      unit: date
+    - name: node
+      type: varchar
+      unit: kubernetes_node
+    - name: interval_start
+      type: timestamp
+      unit: date
+    - name: interval_end
+      type: timestamp
+      unit: date
+    - name: node_labels
+      type: varchar
+  inputs:
+    - name: ReportingStart
+      type: time
+    - default: hccm-openshift-node-labels
+      name: CostManagementOpenShiftNodeLabelsReportName
+      type: Report
+  query: |
+    SELECT report_period_start,
+      report_period_end,
+      node,
+      interval_start,
+      interval_end,
+      node_labels
+    FROM {| .Report.Inputs.CostManagementOpenShiftNodeLabelsReportName | reportTableName |}
+    WHERE {| .Report.Inputs.CostManagementOpenShiftNodeLabelsReportName | reportTableName |}.interval_start >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}' - interval '10' day

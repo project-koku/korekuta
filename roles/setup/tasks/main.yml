@@ -188,6 +188,7 @@
         - 'files/kube*'
         - 'files/pod*'
         - 'files/hccm*'
+        - 'files/node*'
         - 'files/persistentvolume*'
       when:
         - oc_project.stdout is defined and oc_project
