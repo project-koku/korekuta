@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+lint: |
+  yamllint .
+platforms:
+  - name: instance
+    image: centos:7
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: podman
+  test_sequence:
+    - lint
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    # This role is not idempotent.
+    # - idempotence
+    - side_effect
+    - verify
+    - destroy
+verifier:
+  name: testinfra
+  directory: ../default/tests/
+  lint:
+    name: flake8
