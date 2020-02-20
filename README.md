@@ -45,3 +45,12 @@ Change directory to the role to be tested and run molecule (example below with s
 cd roles/setup
 molecule test
 ```
+
+There are two Molecule scenarios for each role two support both the Docker and
+Podman container drivers.
+
+To run a particular scenario, use molecule's `-s` flag:
+
+```
+molecule test -s <scenario>
+```
