@@ -10,7 +10,7 @@ shellingham = ">=1.3"
 
 [dev-packages]
 tox = ">=3.14"
-molecule = {extras = ["docker"],version = ">=2.20"}
+molecule = {extras = ["docker"],version = ">=3.0"}
 flake8 = ">=3.7"
 pylint = ">=2.4"
 selinux = {version = ">=0.2",sys_platform = "== 'linux'"}
