@@ -4,6 +4,7 @@ collect_format: 'csv'
 collect_reports:
   - 'hccm-openshift-usage-lookback'
   - 'hccm-openshift-persistentvolumeclaim-lookback'
+  - 'hccm-openshift-node-labels-lookback'
 collect_archive_format: gz
 collect_archive_path: '/tmp'
 collect_archive_name: korekuta

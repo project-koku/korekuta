@@ -1,0 +1,30 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportQuery
+metadata:
+  labels:
+    cost-management: "true"
+  name: node-labels-raw
+spec:
+  columns:
+    - name: node
+      type: varchar
+      unit: kubernetes_node
+    - name: labels
+      type: map<varchar, varchar>
+    - name: timestamp
+      type: timestamp
+      unit: date
+    - name: dt
+      type: varchar
+  inputs:
+    - default: kube-node-labels
+      name: KubeNodeLabelsDataSourceName
+      type: ReportDataSource
+  query: |
+    SELECT labels['node'] as node,
+        labels,
+        "timestamp",
+        dt
+    FROM {| dataSourceTableName .Report.Inputs.KubeNodeLabelsDataSourceName |}
+    WHERE element_at(labels, 'node') IS NOT NULL

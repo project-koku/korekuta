@@ -1,0 +1,16 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: Report
+metadata:
+  labels:
+    cost-management: "true"
+  name: hccm-openshift-node-labels-lookback
+spec:
+  query: hccm-openshift-node-labels-lookback
+  inputs:
+    - name: CostManagementOpenShiftNodeLabelsReportName
+      value: hccm-openshift-node-labels
+  gracePeriod: 10m  # wait for sub-query to finish
+  schedule:
+    period: hourly
+  overwriteExistingData: true

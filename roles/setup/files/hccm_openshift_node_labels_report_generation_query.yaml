@@ -1,0 +1,48 @@
+---
+apiVersion: metering.openshift.io/v1alpha1
+kind: ReportQuery
+metadata:
+  labels:
+    cost-management: "true"
+  name: hccm-openshift-node-labels
+spec:
+  columns:
+    - name: report_period_start
+      type: timestamp
+      unit: date
+    - name: report_period_end
+      type: timestamp
+      unit: date
+    - name: node
+      type: varchar
+      unit: kubernetes_node
+    - name: interval_start
+      type: timestamp
+      unit: date
+    - name: interval_end
+      type: timestamp
+      unit: date
+    - name: node_labels
+      type: varchar
+  inputs:
+    - name: ReportingStart
+      type: time
+    - name: ReportingEnd
+      type: time
+    - default: node-labels-raw
+      name: NodeLabelsRawDataSourceName
+      type: ReportDataSource
+  query: |
+    SELECT
+      date_trunc('month', timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart| prestoTimestamp |}') AS report_period_start,
+      date_trunc('month', timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}')  + interval '1' month AS report_period_end,
+      node,
+      date_trunc('hour', "timestamp") as interval_start,
+      date_trunc('hour', "timestamp") + interval '59' minute + interval '59' second as interval_end,
+      array_join(map_values(transform_values(map_filter(map_union(labels), (k, v) -> k LIKE 'label_%'), (k, v) -> concat(k, ':', v))), '|') as node_labels
+    FROM {| dataSourceTableName .Report.Inputs.NodeLabelsRawDataSourceName |}
+    WHERE "timestamp" >= timestamp '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prestoTimestamp |}'
+      AND "timestamp" < timestamp '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prestoTimestamp |}'
+      AND dt >= '{| default .Report.ReportingStart .Report.Inputs.ReportingStart | prometheusMetricPartitionFormat |}'
+      AND dt <= '{| default .Report.ReportingEnd .Report.Inputs.ReportingEnd | prometheusMetricPartitionFormat |}'
+    GROUP BY node, date_trunc('hour', "timestamp")
