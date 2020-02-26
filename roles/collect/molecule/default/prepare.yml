@@ -3,6 +3,7 @@
   hosts: all
   gather_facts: true
   vars:
+    ansible_python_interpreter: python
     test_paths:
       - '/api/v1/reports'
   tasks:
@@ -36,7 +37,7 @@
     - name: create test file
       copy:
         dest: "{{ item }}/get"
-        content: 'this,is,test,data'
+        src: 'test_data.csv'
       with_items: "{{ test_paths }}"
 
     - name: launch test web server
