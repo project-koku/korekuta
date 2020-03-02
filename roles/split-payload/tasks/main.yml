@@ -1,0 +1,153 @@
+---
+# tasks file for split-payload
+
+- name: File to split
+  debug:
+    var: file
+    verbosity: 2
+
+- stat:
+    path: "{{ file }}"
+  register: file_stat
+
+- name: Check file needs splitting
+  set_fact:
+    split_file: "{{ ((split_max_size | int) < file_stat.stat.size) | bool }}"
+
+- name: Get csv contents
+  set_fact:
+    file_contents: "{{ lookup('file', file).splitlines() }}"
+  no_log: true
+  when:
+    - split_file
+
+- name: Get csv header and total line count
+  set_fact:
+    csv_download_path: "{{ download_path }}"
+    csv_basename: "{{ file | basename }}"
+    csv_header: "{{ file_contents[0] }}"
+    total_lines: "{{ file_contents | length }}"
+    half_lines: "{{ (file_contents | length / 2) | int }}"
+    half_lines_plus_one: "{{ (file_contents | length / 2) | int + 1}}"
+  when:
+    - split_file
+
+- name: Get csv split contents
+  set_fact:
+    csv_name_no_ext: "{{ csv_basename[:-3] }}"
+    first_half: "{{ file_contents[:half_lines | int] }}"
+    second_half: "{{ file_contents[half_lines_plus_one | int:] }}"
+  no_log: true
+  when:
+    - split_file
+
+- name: Prepend header to second_half
+  set_fact:
+    second_half: "{{ [csv_header] + second_half }}"
+  no_log: true
+  when:
+    - split_file
+
+- name: Create contents with newlines
+  set_fact:
+    first_half_newlines: "{{ first_half | join('\n') }}"
+    second_half_newlines: "{{ second_half | join('\n') }}"
+    first_half_file_path: "{{ download_path + csv_name_no_ext + '0.csv' }}"
+    second_half_file_path: "{{ download_path + csv_name_no_ext + '1.csv' }}"
+  when:
+    - split_file
+
+- name: Create new file paths
+  set_fact:
+    first_half_file_path: "{{ download_path + '/' + csv_name_no_ext + '0.csv' }}"
+    second_half_file_path: "{{ download_path + '/' + csv_name_no_ext + '1.csv' }}"
+  when:
+    - split_file
+
+- name: Copy first_half contents
+  copy:
+    content: "{{ first_half_newlines }}"
+    dest: "{{ first_half_file_path }}"
+  when:
+    - split_file
+
+- name: Copy second_half contents
+  copy:
+    content: "{{ second_half_newlines }}"
+    dest: "{{ second_half_file_path }}"
+  when:
+    - split_file
+
+- name: Create new csv_file_list
+  set_fact:
+    csv_file_list: "{{ [first_half_file_path] + [second_half_file_path] }}"
+  when:
+    - split_file
+
+- name: Split payload in loop
+  include_role:
+    name: 'split-payload'
+  vars:
+    file: '{{ item }}'
+    ocp_config: '{{ ocp_config }}'
+    download_path: '{{ csv_download_path }}'
+  with_items:
+    - '{{ csv_file_list }}'
+  when:
+    - split_file
+
+- name: append filename to fact list
+  set_fact:
+    csv_files: "{{ csv_files + [item | basename] }}"
+  with_items: "{{ csv_file_list }}"
+
+- name: CSV filename to json
+  set_fact:
+    csv_files_json: "{{ csv_files | to_json }}"
+  when:
+    - not split_file
+
+- name: Generate archive manifest
+  template:
+    src: 'templates/manifest.j2'
+    dest: '{{ csv_download_path }}/manifest.json'
+  when:
+    - not split_file
+
+- name: Create tarball
+  archive:
+    format: '{{ split_archive_format }}'
+    dest: '{{ split_archive_path }}/{{ split_archive_filename }}'
+    path: "{{ csv_download_path }}"
+    remove: '{{ split_delete_after }}'
+  register: archive_result
+  when:
+    - not split_file
+
+- name: Set Insights Client GPG Flag
+  set_fact:
+    split_insights_bypass_gpg_flag: '--no-gpg'
+  when:
+    - split_insights_bypass_gpg == 'True'
+    - not split_file
+
+- name: Send payload to the Insights Client
+  command: >-
+    {{ split_insights_client_cmd }} {{ split_insights_bypass_gpg_flag }}
+    --payload={{ split_archive_path }}/{{ split_archive_filename }}
+    --content-type={{ split_content_type }}
+  environment:
+    BYPASS_GPG: '{{ split_insights_bypass_gpg }}'
+    EGG: '{{ split_insights_egg_path }}'
+  become: true
+  when: 
+    - archive_result.state == 'file'
+    - not split_file
+
+- name: Remove tarball
+  file:
+    path: '{{ split_archive_path }}/{{ split_archive_filename }}'
+    state: absent
+  when: 
+    - split_delete_after
+    - not split_file

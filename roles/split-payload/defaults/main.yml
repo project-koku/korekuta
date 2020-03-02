@@ -1,0 +1,15 @@
+---
+# defaults file for split-payload
+
+
+split_manifest_uuid: '{{ 99999999999999999999 | random | to_uuid }}'
+split_download_path: '/tmp/korekuta-collect'
+split_archive_format: gz
+split_archive_path: '/tmp'
+split_archive_name: korekuta
+split_delete_after: 'true'
+split_content_type: 'application/vnd.redhat.hccm.tar+tgz'
+split_insights_bypass_gpg: 'False'
+split_insights_egg_path: '/etc/insights-client/rpm.egg'
+split_insights_bypass_gpg_flag: ''
+split_max_size: 10000

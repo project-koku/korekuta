@@ -1,4 +1,19 @@
 ---
+- set_fact:
+    csv_file_list: [/tmp/69a5ae95-f66f-4149-874c-67041629a538_openshift_usage_report.0.csv, /tmp/69a5ae95-f66f-4149-874c-67041629a538_openshift_usage_report.1.csv]
+    OCP_CLUSTER_ID: "69a5ae95-f66f-4149-874c-67041629a538"
+    collect_cluster_download_path: "/tmp"
+
+- name: Split payload in loop
+  include_role:
+    name: 'split-payload'
+  vars:
+    file: '{{ item }}'
+    OCP_CLUSTER_ID: '{{ OCP_CLUSTER_ID }}'
+    download_path: '{{ collect_cluster_download_path }}'
+  with_items:
+    - '{{ csv_file_list }}'
+
 - name: Ensure needed variables are set
   fail:
     msg: 'You must supply "-e {{ item }}=<{{ item }}>".'
@@ -133,55 +148,12 @@
   with_items:
     - '{{ csv_stat_result.results }}'
 
-- name: CSV filename to json
-  set_fact:
-    csv_files_json: "{{ csv_files | to_json }}"
-
-- name: Generate archive manifest
-  template:
-    src: 'templates/manifest.j2'
-    dest: '{{ collect_cluster_download_path }}/manifest.json'
-
-- name: Create tarball
-  archive:
-    format: '{{ collect_archive_format }}'
-    dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path: "{{ collect_cluster_download_path }}"
-    remove: '{{ collect_delete_after }}'
-  register: archive_result
-
-- name: Set Insights Client GPG Flag
-  set_fact:
-    collect_insights_bypass_gpg_flag: '--no-gpg'
-  when:
-    - collect_insights_bypass_gpg == 'True'
-
-- name: Send payload to the Insights Client
-  command: >-
-    {{ collect_insights_client_cmd }} {{ collect_insights_bypass_gpg_flag }}
-    --payload={{ collect_archive_path }}/{{ collect_archive_filename }}
-    --content-type={{ collect_content_type }}
-
-  environment:
-    BYPASS_GPG: '{{ collect_insights_bypass_gpg }}'
-    EGG: '{{ collect_insights_egg_path }}'
-  become: true
-  when: archive_result.state == 'file'
-
-- name: Remove temp files
-  file:
-    path: '{{ collect_cluster_download_path }}'
-    state: absent
-  when: collect_delete_after
-
-- name: Remove temp config
-  file:
-    path: '{{ collect_config_path }}'
-    state: absent
-  when: collect_delete_after
-
-- name: Remove tarball
-  file:
-    path: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    state: absent
-  when: collect_delete_after
+- name: Split payload in loop
+  include_role:
+    name: 'split-payload'
+  vars:
+    file: '{{ item }}'
+    ocp_config: '{{ ocp_config }}'
+    download_path: '{{ collect_cluster_download_path }}'
+  with_items:
+    - '{{ csv_stat_result.results }}'

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include split-payload"
+      include_role:
+        name: "split-payload"
