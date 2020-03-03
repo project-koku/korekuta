@@ -1,3 +1,3 @@
 ---
 # vars file for collect
-collect_archive_filename: '{{ collect_archive_name }}.tar.{{ collect_archive_format }}'
+collect_archive_filename: '{{ collect_archive_name }}.tar.gz'

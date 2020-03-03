@@ -23,7 +23,7 @@
     path: '{{ OCP_TOKEN_PATH }}'
   register: ocp_token_stat_result
 
-- name: OCP_TOKEN_PATH does not exits
+- name: OCP_TOKEN_PATH does not exist
   fail:
     msg: 'No file was found for OCP_TOKEN_PATH at "{{ OCP_TOKEN_PATH }}".'
   when:
@@ -49,7 +49,7 @@
     path: '{{ OCP_CLI }}'
   register: check_oc
 
-- name: OCP_CLI does not exits
+- name: OCP_CLI does not exist
   fail:
     msg: 'No file was found for OCP_CLI at "{{ OCP_CLI }}".'
   when:

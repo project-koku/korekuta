@@ -5,7 +5,6 @@ collect_reports:
   - 'hccm-openshift-usage-lookback'
   - 'hccm-openshift-persistentvolumeclaim-lookback'
   - 'hccm-openshift-node-labels-lookback'
-collect_archive_format: gz
 collect_archive_path: '/tmp'
 collect_archive_name: korekuta
 collect_delete_after: 'true'
@@ -20,3 +19,4 @@ collect_insights_bypass_gpg: 'False'
 collect_insights_egg_path: '/etc/insights-client/rpm.egg'
 collect_insights_bypass_gpg_flag: ''
 collect_ocp_report_timeout: 60
+collect_max_csvfile_size: 99

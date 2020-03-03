@@ -1,7 +1,7 @@
 Korekuta Collect
 =========
 
-Collect metering report files from an OpenShift 3.x cluster.
+Collect metering report files from an OpenShift cluster.
 
 Requirements
 ------------

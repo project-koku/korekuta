@@ -4,6 +4,7 @@
     msg: 'You must supply "-e {{ item }}=<{{ item }}>".'
   when: 'item is not defined'
   with_items:
+    - OCP_CLI
     - OCP_CLUSTER_ID
 
 - name: Define OCP Usage configuration defaults
@@ -51,7 +52,6 @@
 - name: Set facts from OCP config
   set_fact:
     ocp_insecure_login: '--insecure-skip-tls-verify={{ ocp_validate_cert }}'
-    api_host: '{{ ocp_config["ocp_api"] }}'
     api_path: '{{ ocp_config["metering_api"] }}/api/v1/reports/get'
     collect_file_prefix: '{{ collect_manifest_uuid }}'
     collect_manifest_uuid: '{{ collect_manifest_uuid }}'
@@ -84,11 +84,17 @@
   set_fact:
     collect_cluster_download_path: '{{ collect_download_path }}/{{  OCP_CLUSTER_ID }}'
 
+- name: Set Insights Client GPG Flag
+  set_fact:
+    collect_insights_bypass_gpg_flag: '--no-gpg'
+  when:
+    - collect_insights_bypass_gpg == 'True'
+
 - name: Remove temp files
   file:
     path: '{{ collect_cluster_download_path }}'
     state: absent
-  when: collect_delete_after
+  when: collect_delete_after | bool
 
 - name: Create temp dir for downloaded files
   file:
@@ -105,7 +111,8 @@
 - name: Download OCP report from endpoint
   get_url:
     url: '{{ item }}'
-    headers: "Authorization:Bearer {{ cat_token.stdout }}"
+    headers: 
+      Authorization: "Bearer {{ cat_token.stdout }}"
     dest: '{{ collect_cluster_download_path }}/{{ collect_file_prefix }}_openshift_usage_report.{{ idx }}.{{ collect_format }}'
     validate_certs: '{{ ocp_config["ocp_validate_cert"] | bool }}'
     timeout: '{{ collect_ocp_report_timeout }}'
@@ -133,55 +140,55 @@
   with_items:
     - '{{ csv_stat_result.results }}'
 
-- name: CSV filename to json
-  set_fact:
-    csv_files_json: "{{ csv_files | to_json }}"
+- name: copy packaging script to host
+  copy:
+    src: files/package_report.py
+    dest: /usr/local/bin/package_report.py
+    mode: 0755
 
-- name: Generate archive manifest
-  template:
-    src: 'templates/manifest.j2'
-    dest: '{{ collect_cluster_download_path }}/manifest.json'
+- name: Run packaging script to prepare reports for sending to Insights
+  command: >-
+    /usr/local/bin/package_report.py
+        --filepath {{ collect_cluster_download_path }}
+        --max-size {{ collect_max_csvfile_size }}
+        --ocp-cluster-id {{ OCP_CLUSTER_ID }}
+        --overwrite
 
-- name: Create tarball
-  archive:
-    format: '{{ collect_archive_format }}'
-    dest: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
-    path: "{{ collect_cluster_download_path }}"
-    remove: '{{ collect_delete_after }}'
-  register: archive_result
-
-- name: Set Insights Client GPG Flag
-  set_fact:
-    collect_insights_bypass_gpg_flag: '--no-gpg'
-  when:
-    - collect_insights_bypass_gpg == 'True'
+  register: packaged_reports
 
 - name: Send payload to the Insights Client
   command: >-
     {{ collect_insights_client_cmd }} {{ collect_insights_bypass_gpg_flag }}
-    --payload={{ collect_archive_path }}/{{ collect_archive_filename }}
+    --payload={{ item }}
     --content-type={{ collect_content_type }}
 
   environment:
     BYPASS_GPG: '{{ collect_insights_bypass_gpg }}'
     EGG: '{{ collect_insights_egg_path }}'
   become: true
-  when: archive_result.state == 'file'
+  when: packaged_reports.stdout_lines != []
+  with_items: 
+    - '{{ packaged_reports.stdout_lines }}'
+
+- name: Remove packaging script
+  file:
+    path: /usr/local/bin/package_report.py
+    state: absent
 
 - name: Remove temp files
   file:
     path: '{{ collect_cluster_download_path }}'
     state: absent
-  when: collect_delete_after
+  when: collect_delete_after | bool
 
 - name: Remove temp config
   file:
     path: '{{ collect_config_path }}'
     state: absent
-  when: collect_delete_after
+  when: collect_delete_after | bool
 
 - name: Remove tarball
   file:
     path: '{{ collect_archive_path }}/{{ collect_archive_filename }}'
     state: absent
-  when: collect_delete_after
+  when: collect_delete_after | bool

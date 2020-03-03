@@ -1,7 +1,7 @@
 Korekuta Setup
 =========
 
-Prepare an OpenShift 3.x cluster for retrieving metering reports.
+Prepare an OpenShift cluster for retrieving metering reports.
 
 Requirements
 ------------
