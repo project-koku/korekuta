@@ -998,10 +998,10 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:30ea90b21dabd11da5f509710ad3be2ae47d40ccbc717dfdd2efe4367c10f598",
-                "sha256:4a36a96d785428278edd389d9c36d763c5755844beb7509279194647b1ef47f1"
+                "sha256:87831f1070534b636fea2241dd66f3afe37ac9041bcca6d0af3215cdcfbf7d82",
+                "sha256:f3128d882383c503003130389bf892856341c1da12c881ae24d6358c82561b55"
             ],
-            "version": "==20.0.7"
+            "version": "==20.0.13"
         },
         "wcwidth": {
             "hashes": [
