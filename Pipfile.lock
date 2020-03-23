@@ -216,9 +216,10 @@
         },
         "python-string-utils": {
             "hashes": [
-                "sha256:05d24a8d884b629b534af992dc1f35dc4de4c73678ffdffa0efcbe667058af1f"
+                "sha256:dcf9060b03f07647c0a603408dc8b03f807f3b54a05c6e19eb14460256fac0cb",
+                "sha256:f1a88700baf99db1a9b6953f44181ad9ca56623c81e257e6009707e2e7851fa4"
             ],
-            "version": "==0.6.0"
+            "version": "==1.0.0"
         },
         "pyyaml": {
             "hashes": [
