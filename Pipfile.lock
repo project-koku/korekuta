@@ -182,10 +182,9 @@
         },
         "openshift": {
             "hashes": [
-                "sha256:10868c5697c7610e1d18d62118f1bf2096d35789fa9790c89285947a93545a8a"
+                "sha256:bfc398aac8ad9d903b520e473290ebc35d9c9a739c8e083fde55d93288c7f67d"
             ],
-            "index": "pypi",
-            "version": "==0.10.2"
+            "version": "==0.11.0"
         },
         "pyasn1": {
             "hashes": [
