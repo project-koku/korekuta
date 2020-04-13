@@ -685,15 +685,11 @@
             "version": "==0.6.1"
         },
         "molecule": {
-            "extras": [
-                "docker"
-            ],
             "hashes": [
-                "sha256:10cd5eed0f2b1a8676d867e572d2b2e85a94f9af91e6e21136ccfbf830e2203e",
-                "sha256:bed8d8080fcb7985641b2191f80a957aca1b404bee393bc76f862cb2addb06f2"
+                "sha256:6ed924033dde822c00f87b02ea9fda3c6d9d44feb17a2940b7529317ae4d3f67",
+                "sha256:c83f90cb8dc87f6663475711ac8c4f4c2112a1ff89ccb6665f0e3376032e77a7"
             ],
-            "index": "pypi",
-            "version": "==3.0.2"
+            "version": "==3.0.3"
         },
         "monotonic": {
             "hashes": [
