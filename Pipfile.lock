@@ -859,11 +859,9 @@
         },
         "python-gilt": {
             "hashes": [
-                "sha256:4fd58c128635d1f4a8c93305e648f23379ce56e23624e4c5479427fcd2d5656e",
-                "sha256:c7321ef1a8efddbdef657b4fd21c3eaf1b4cb24a9656d97b73a444b1feb2067a",
-                "sha256:e23a45a6905e6bb7aec3ff7652b48309933a6991fad4546d9e793ac7e0513f8a"
+                "sha256:e220ea2e7e190ee06dbfa5fafe87967858b4ac0cf53f3072fa6ece4664a42082"
             ],
-            "version": "==1.2.1"
+            "version": "==1.2.3"
         },
         "pyyaml": {
             "hashes": [
