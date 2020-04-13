@@ -1022,10 +1022,10 @@
         },
         "yamllint": {
             "hashes": [
-                "sha256:7318e189027951983c3cb4d6bcaa1e75deef7c752320ca3ce84e407f2551e8ce",
-                "sha256:76912b6262fd7e0815d7b14c4c2bb2642c754d0aa38f2d3e4b4e21c77872a3bf"
+                "sha256:7ef024017c54850f788da133155fc8b4f8cb75778ea89c724da66fe47594e061",
+                "sha256:a6cb7d27d70628b6b5129ed62f2e97a27065c2ec4d9019b00221c72e3f8f9428"
             ],
-            "version": "==1.20.0"
+            "version": "==1.22.0"
         },
         "zipp": {
             "hashes": [
