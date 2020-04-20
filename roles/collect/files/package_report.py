@@ -189,7 +189,7 @@ def render_manifest(args, archivefiles=[]):
     manifest["cluster_id"] = args.ocp_cluster_id
     manifest["uuid"] = manifest_uuid
     manifest_files = []
-    for idx in range(len(archivefiles)): 
+    for idx in range(len(archivefiles)):
         upload_name = f"{manifest_uuid}_openshift_usage_report.{idx}.csv"
         manifest_files.append(upload_name)
     manifest["files"] = manifest_files
@@ -226,7 +226,7 @@ def write_tarball(args, tarfilename, archivefiles=[]):
     """
     if not archivefiles:
         return None
-    
+
     manifest_filename, manifest_uuid = render_manifest(args, archivefiles)
     try:
         with tarfile.open(tarfilename, f"{FILE_FLAG}:gz") as tarball:
@@ -264,8 +264,9 @@ if "__main__" in __name__:
             if ".csv" in filename:
                 tarfilename = os.path.abspath(
                     tarpath + tarfiletmpl.format(idx))
-                output_tar = write_tarball(args, 
-                    tarfilename, [f"{args.filepath}/{filename}"])
+                output_tar = write_tarball(args,
+                                           tarfilename,
+                                           [f"{args.filepath}/{filename}"])
                 if output_tar:
                     out_files.append(output_tar)
     else:
