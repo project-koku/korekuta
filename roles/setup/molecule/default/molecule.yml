@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
 lint: |
-  yamllint .
+  yamllint defaults/ handlers/ meta/ molecule/ tasks/ vars/
 platforms:
   - name: instance
     image: centos:7
