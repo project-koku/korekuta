@@ -53,29 +53,9 @@ def test_manifest_file(host):
 
     list_dir = host.run(f"ls -1 {DOWNLOAD_PATH}/{CLUSTER_ID}/*.csv").stdout.split()
     assert len(list_dir) > 0
+    assert len(manifest.get("files", [])) > 0
     for file_name in list_dir:
         assert re.search(CSV_RE, file_name)
-        assert os.path.basename(file_name) in manifest.get("files")
 
     assert re.match(UUID_RE, manifest.get("uuid"))
     assert manifest.get("cluster_id") == CLUSTER_ID
-
-
-def test_archive_file(host):
-    """Test archive file."""
-    archive_re = r"korekuta(_\d+)?.tar.gz"
-    list_dir = host.run(f"ls -1 {DOWNLOAD_PATH}/*.tar.gz").stdout.split()
-
-    # files exist
-    assert len(list_dir) > 0
-    for file_name in list_dir:
-        assert re.search(archive_re, file_name)
-        assert host.file(file_name).size <= (1024 * 1024)
-        tarfiles = host.run(f"tar -tf {DOWNLOAD_PATH}/{file_name}").stdout.split()
-        for tfile in tarfiles:
-            ext = tfile.split(".")[-1]
-            assert ext in ["csv", "json"]
-            if ext == "csv":
-                assert re.search(CSV_RE, tfile)
-            elif ext == "json":
-                assert tfile == "manifest.json"

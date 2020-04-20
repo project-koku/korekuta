@@ -35,7 +35,7 @@ MEGABYTE = 1024 * 1024
 TEMPLATE = {
     "files": None,
     "date": datetime.utcnow().isoformat(),
-    "uuid": str(uuid4()),
+    "uuid": None,
     "cluster_id": None
 }
 
@@ -174,7 +174,7 @@ def split_files(filepath, max_size):
             LOG.info(f"Split files: {split_files}")
 
 
-def render_manifest(args):
+def render_manifest(args, archivefiles=[]):
     """Render the manifest template and write it to a file.
 
     Args:
@@ -182,10 +182,17 @@ def render_manifest(args):
 
     Returns:
         (str) the rendered manifest file name
+        (str) the manifest uuid
     """
     manifest = TEMPLATE
+    manifest_uuid = str(uuid4())
     manifest["cluster_id"] = args.ocp_cluster_id
-    manifest["files"] = os.listdir(args.filepath)
+    manifest["uuid"] = manifest_uuid
+    manifest_files = []
+    for idx in range(len(archivefiles)):
+        upload_name = f"{manifest_uuid}_openshift_usage_report.{idx}.csv"
+        manifest_files.append(upload_name)
+    manifest["files"] = manifest_files
     LOG.debug(f"rendered manifest: {manifest}")
     manifest_filename = f"{args.filepath}/manifest.json"
 
@@ -200,13 +207,14 @@ def render_manifest(args):
         LOG.critical(f"Fatal error: {exc}")
         sys.exit(2)
     LOG.info(f"manifest generated")
-    return manifest_filename
+    return (manifest_filename, manifest_uuid)
 
 
-def write_tarball(tarfilename, archivefiles=[]):
+def write_tarball(args, tarfilename, archivefiles=[]):
     """Write a tarball, adding the given files to the archive.
 
     Args:
+        args (Namespace) an ArgumentParser Namespace object
         tarfilename (str) the name of the tarball to create
         archivefiles (list) the list of files to include in the archive
 
@@ -216,11 +224,20 @@ def write_tarball(tarfilename, archivefiles=[]):
     Raises:
         FileExistsError if tarfilename already exists
     """
+    if not archivefiles:
+        return None
+
+    manifest_filename, manifest_uuid = render_manifest(args, archivefiles)
     try:
         with tarfile.open(tarfilename, f"{FILE_FLAG}:gz") as tarball:
+            file_count = 0
             for fname in archivefiles:
                 LOG.debug(f"Adding {fname} to {tarfilename}: ")
-                tarball.add(fname)
+                if fname.endswith(".csv"):
+                    upload_name = f"{manifest_uuid}_openshift_usage_report.{file_count}.csv"
+                    tarball.add(fname, arcname=upload_name)
+                    file_count += 1
+            tarball.add(manifest_filename, arcname="manifest.json")
     except FileExistsError as exc:
         LOG.critical(exc)
         sys.exit(2)
@@ -241,18 +258,23 @@ if "__main__" in __name__:
     need_split = need_split(args.filepath, args.max_size)
     if need_split:
         split_files(args.filepath, args.max_size)
-        manifest_filename = render_manifest(args)
-
         tarpath = args.filepath + "/../"
         tarfiletmpl = "korekuta_{}.tar.gz"
         for idx, filename in enumerate(os.listdir(args.filepath)):
             if ".csv" in filename:
-                tarfilename = os.path.abspath(tarpath + tarfiletmpl.format(idx))
-                out_files.append(write_tarball(tarfilename, [f"{args.filepath}/{filename}", manifest_filename]))
+                tarfilename = os.path.abspath(
+                    tarpath + tarfiletmpl.format(idx))
+                output_tar = write_tarball(args,
+                                           tarfilename,
+                                           [f"{args.filepath}/{filename}"])
+                if output_tar:
+                    out_files.append(output_tar)
     else:
-        render_manifest(args)
         tarfilename = os.path.abspath(args.filepath + "/../korekuta.tar.gz")
-        out_files.append(write_tarball(tarfilename, [args.filepath]))
+        files = [f"{args.filepath}/{filename}" for filename in os.listdir(args.filepath)]
+        output_tar = write_tarball(args, tarfilename, files)
+        if output_tar:
+            out_files.append(output_tar)
 
     for fname in out_files:
         print(fname)

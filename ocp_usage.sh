@@ -45,7 +45,7 @@ usage() {
          -e OCP_METERING_NAMESPACE=metering
     * Provide OpenShift Container Platform CLI (defaults to /usr/bin/oc):
          -e OCP_CLI=/usr/local/bin/oc
-    * Validate OpenShift SSL Certifates  (defaults to false):
+    * Validate OpenShift SSL Certificates  (defaults to false):
          -e OCP_SSL_CERT_VALIDATION=false
     * Provide OpenShift Cluster Identifier:
          -e OCP_CLUSTER_ID=bbb0b82b-e40d-41eb-8354-e07bc6a26a38
