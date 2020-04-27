@@ -859,10 +859,10 @@
         },
         "sh": {
             "hashes": [
-                "sha256:ae3258c5249493cebe73cb4e18253a41ed69262484bad36fdb3efcb8ad8870bb",
-                "sha256:b52bf5833ed01c7b5c5fb73a7f71b3d98d48e9b9b8764236237bdc7ecae850fc"
+                "sha256:ee445c1ab771a095a31302789ef086d0b7fdc07591fd29385d445fa5165dbd74",
+                "sha256:f00dfb38579ab661786daec7a7b9436facf77682f62160db5b66d58c8b2f270a"
             ],
-            "version": "==1.12.14"
+            "version": "==1.13.0"
         },
         "shellingham": {
             "hashes": [
