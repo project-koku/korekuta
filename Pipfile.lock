@@ -107,10 +107,10 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:050f1713142fa57d4b34f4fd4a998210e330f6a29c84c6ce359b928cc11dc8ad",
-                "sha256:9813eaae335c45e8a1b5d274610fa961ac8aa650568d1cfb005b2c07da6bde6c"
+                "sha256:73b141d122942afe12e8bfdcb6900d5df35c27d39700f078363ba0b1298ad33b",
+                "sha256:fbf25fee328c0828ef293459d9c649ef84ee44c0b932bb999d19df0ead1b40cf"
             ],
-            "version": "==1.14.0"
+            "version": "==1.15.0"
         },
         "idna": {
             "hashes": [
