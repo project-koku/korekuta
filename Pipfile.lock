@@ -883,11 +883,10 @@
         },
         "testinfra": {
             "hashes": [
-                "sha256:2a0ebc128389e3e8c52e08ee78c268a1580b0edc88097e12d624c7a3c809f0b1",
-                "sha256:b603bf25db98a6c5f13660c4197e73fa29722c6551bdf054f6eeadf8ef81541a"
+                "sha256:cb33ab1a2d75c6cbaecb350067edf02250b783598a1c5248889b8b35e5f8d586",
+                "sha256:faaa013c4812f7c298dddf41388ac3a7e38da9cbdbfa72d4bcd0857debc06900"
             ],
-            "index": "pypi",
-            "version": "==5.0.0"
+            "version": "==5.1.0"
         },
         "toml": {
             "hashes": [
