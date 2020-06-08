@@ -564,11 +564,10 @@
         },
         "importlib-resources": {
             "hashes": [
-                "sha256:4019b6a9082d8ada9def02bece4a76b131518866790d58fdda0b5f8c603b36c2",
-                "sha256:dd98ceeef3f5ad2ef4cc287b8586da4ebad15877f351e9688987ad663a0a29b8"
+                "sha256:7f6aae2ed252ba10f5d1af5676b0e35f3b3eb7d3cc103b8365cc92aec0c79258",
+                "sha256:a86462cf34a6d391d1d5d598a5e2f5aac9fc00b265d40542e1196328f015d1f6"
             ],
-            "markers": "python_version < '3.7'",
-            "version": "==1.4.0"
+            "version": "==2.0.0"
         },
         "isort": {
             "hashes": [
