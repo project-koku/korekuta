@@ -1,5 +1,7 @@
 # korekuta
 
+The korekuta repository is now read-only and will not receive additional updates. Please see the newer korekuta-operator which is now being maintained in korekuta's place. https://github.com/project-koku/korekuta-operator
+
 ## About
 Data collector tool to obtain OCP usage data and upload it to masu. The data collector tool utilizes [ansible](https://www.ansible.com/) to collect usage data from an OCP cluster installation.
 
